@@ -1,0 +1,45 @@
+import { GameManager } from './GameManager';
+import { createMana } from './Mana';
+import { createPlayer } from './Player';
+import { FIXED_CARDS, SPECIAL_CARDS } from './cards';
+import { shuffle } from './util';
+
+// Creates a random initial game state per rules:
+// - 4 players
+// - Each player starts with life=12, mana=0, openCard=null
+// - Each hand: 3 fixed cards (斧兵/剣士/槍兵) + 2 random special cards
+// - Shared deck contains remaining special cards
+// - Turn starts at 0, state = 'introduction'
+export const InitialGameManager = (): GameManager => {
+  const playersCount = 4;
+
+  // Build and shuffle the special deck
+  const shuffled = shuffle(SPECIAL_CARDS);
+
+  // Deal 2 special cards per player
+  const handsExtras: string[][] = Array.from({ length: playersCount }, () => []);
+  let deckIndex = 0;
+  for (let i = 0; i < playersCount; i++) {
+    handsExtras[i] = [shuffled[deckIndex++], shuffled[deckIndex++]];
+  }
+
+  const remainingDeck = shuffled.slice(deckIndex);
+
+  const players = Array.from({ length: playersCount }, (_, i) =>
+    createPlayer({
+      openCard: null,
+      hands: [...FIXED_CARDS, ...handsExtras[i]],
+      mana: createMana(0, 0, 0),
+      life: 12,
+    })
+  );
+
+  return GameManager.create({
+    players,
+    turn: 0,
+    deck: remainingDeck,
+    previewCard: null,
+    state: 'introduction',
+  });
+};
+
