@@ -1,7 +1,7 @@
 import { GameManager } from './GameManager';
 import { createMana } from './Mana';
 import { createPlayer } from './Player';
-import { FIXED_CARDS, SPECIAL_CARDS } from './cards';
+import { CARDS, SPECIAL_CARD_IDS } from './cards';
 import { shuffle } from './util';
 
 // Creates a random initial game state per rules:
@@ -14,7 +14,7 @@ export const InitialGameManager = (): GameManager => {
   const playersCount = 4;
 
   // Build and shuffle the special deck
-  const shuffled = shuffle(SPECIAL_CARDS);
+  const shuffled = shuffle(SPECIAL_CARD_IDS);
 
   // Deal 2 special cards per player
   const handsExtras: string[][] = Array.from({ length: playersCount }, () => []);
@@ -25,10 +25,12 @@ export const InitialGameManager = (): GameManager => {
 
   const remainingDeck = shuffled.slice(deckIndex);
 
+  const fixedIds = CARDS.filter((c) => c.isFixed).map((c) => c.id);
+
   const players = Array.from({ length: playersCount }, (_, i) =>
     createPlayer({
       openCard: null,
-      hands: [...FIXED_CARDS, ...handsExtras[i]],
+      hands: [...fixedIds, ...handsExtras[i]],
       mana: createMana(0, 0, 0),
       life: 12,
     })
@@ -42,4 +44,3 @@ export const InitialGameManager = (): GameManager => {
     state: 'introduction',
   });
 };
-
