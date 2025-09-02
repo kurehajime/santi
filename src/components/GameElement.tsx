@@ -1,8 +1,12 @@
 import React from 'react';
+import { GameManager } from '../model/GameManager';
+import { InitialGameManager } from '../model/InitialGameManager';
+import { FieldElement } from './FieldElement';
 
 // フェーズ1: SVGでHello, worldを描画する最小実装
 export const GameElement: React.FC = () => {
-  const width = 480;
+  const [gm] = React.useState<GameManager>(() => InitialGameManager());
+  const width = 600;
   const height = Math.round(width * Math.SQRT2);
 
   return (
@@ -11,31 +15,10 @@ export const GameElement: React.FC = () => {
       height={height}
       viewBox={`0 0 ${width} ${height}`}
       role="img"
-      aria-label="Hello, world"
+      aria-label="Game Field"
       style={{ border: '1px solid #e5e7eb', borderRadius: 12, background: '#0b1020' }}
     >
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#a78bfa" />
-        </linearGradient>
-      </defs>
-
-      <rect x={0} y={0} width={width} height={height} fill="#0b1020" />
-      <g transform={`translate(${width / 2}, ${height / 2})`}>
-        <text
-          x={0}
-          y={0}
-          fill="url(#g)"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fontSize={40}
-          fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial"
-        >
-          Hello, world
-        </text>
-      </g>
+      <FieldElement gm={gm} width={width} height={height} />
     </svg>
   );
 };
-
