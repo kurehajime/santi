@@ -19,7 +19,9 @@ export const UserFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y,
   const player = gm.players[playerIndex];
   if (!player) return null;
 
-  const rotation = seat === 'bottom' ? 0 : seat === 'top' ? 180 : seat === 'left' ? -90 : 90;
+  // Rotate the entire seat so text orientation matches the diagram.
+  // Left should be clockwise (90), Right should be counter-clockwise (-90).
+  const rotation = seat === 'bottom' ? 0 : seat === 'top' ? 180 : seat === 'left' ? 90 : -90;
 
   // Basic sizes relative to seat box
   const cardW = Math.min(width, height) * 0.22; // scalable
@@ -54,4 +56,3 @@ export const UserFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y,
     </g>
   );
 };
-
