@@ -17,10 +17,10 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   const CPU_SEAT_VISIBLE_W_RATIO = 0.8; // CPUの見かけの横幅を統一（やや広め）
   const CARD_WIDTH_RATIO = 0.18;
   // CPUの手札を盤面外に押し出すオフセット量（席ごとに独立指定）
-  const CPU_HIDE_OFFSET_TOP_PX = 150;
-  const CPU_HIDE_OFFSET_LEFT_PX = 250;
-  const CPU_HIDE_OFFSET_RIGHT_PX = 250;
-  const CPU_SIDE_Y_SHIFT_PX = 80; // 左右CPUを上方向へ寄せる量（px）
+  const CPU_HIDE_OFFSET_TOP_PX = 0;
+  const CPU_HIDE_OFFSET_LEFT_PX = 200;
+  const CPU_HIDE_OFFSET_RIGHT_PX = 200;
+  const CPU_SIDE_Y_SHIFT_PX = -3; // 左右CPUを上方向へ寄せる量（px）
 
   const padding = PADDING;
   const w = width - padding * 2;
@@ -36,6 +36,8 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
   // Unified card size across field and hands
   const cardW = Math.min(w, h) * CARD_WIDTH_RATIO;
+  const cardH = Math.round(cardW * Math.SQRT2);
+  const OPEN_TOP_MARGIN = Math.round(cardH * 1.0); // extra headroom inside each seat image
   // hide offsets per seat
   const cpuHideTop = CPU_HIDE_OFFSET_TOP_PX;
   const cpuHideLeft = CPU_HIDE_OFFSET_LEFT_PX;
@@ -74,54 +76,62 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
-      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop, cpuSeatW, seatH)}>
+      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop - OPEN_TOP_MARGIN, cpuSeatW, seatH + OPEN_TOP_MARGIN)}>
         <image
           href={toSvgDataUrl(
-            <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />,
+            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
+              <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />
+            </g>,
             cpuSeatW,
-            seatH
+            seatH + OPEN_TOP_MARGIN
           )}
           width={cpuSeatW}
-          height={seatH}
+          height={seatH + OPEN_TOP_MARGIN}
         />
       </g>
 
       {/* Left (CPU 2) */}
-      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
+      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX - OPEN_TOP_MARGIN, cpuSeatW, sideSeatW + OPEN_TOP_MARGIN)}>
         <image
           href={toSvgDataUrl(
-            <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
+            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
+              <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
+            </g>,
             cpuSeatW,
-            sideSeatW
+            sideSeatW + OPEN_TOP_MARGIN
           )}
           width={cpuSeatW}
-          height={sideSeatW}
+          height={sideSeatW + OPEN_TOP_MARGIN}
         />
       </g>
 
       {/* Right (CPU 3) */}
-      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
+      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX - OPEN_TOP_MARGIN, cpuSeatW, sideSeatW + OPEN_TOP_MARGIN)}>
         <image
           href={toSvgDataUrl(
-            <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
+            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
+              <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
+            </g>,
             cpuSeatW,
-            sideSeatW
+            sideSeatW + OPEN_TOP_MARGIN
           )}
           width={cpuSeatW}
-          height={sideSeatW}
+          height={sideSeatW + OPEN_TOP_MARGIN}
         />
       </g>
 
       {/* Bottom (YOU) */}
-      <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8, seatW, seatH)}>
+      <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8 - OPEN_TOP_MARGIN, seatW, seatH + OPEN_TOP_MARGIN)}>
         <image
           href={toSvgDataUrl(
-            <PlayerFieldElement gm={gm} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />,
+            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
+              <PlayerFieldElement gm={gm} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />
+            </g>,
             seatW,
-            seatH
+            seatH + OPEN_TOP_MARGIN
           )}
           width={seatW}
-          height={seatH}
+          height={seatH + OPEN_TOP_MARGIN}
         />
       </g>
 
