@@ -4,27 +4,39 @@ import type { Player } from '../model/Player';
 type Props = { player: Player; width: number; height: number };
 
 export const StatusElement: React.FC<Props> = ({ player, width, height }) => {
-  const r = 6;
-  const pad = 6;
+  const r = Math.round(Math.min(width, height) * 0.08);
+  const pad = Math.max(6, Math.round(height * 0.08));
+  const pipR = Math.max(6, Math.round(height * 0.12));
+  const fs = Math.max(11, Math.round(height * 0.24));
+  const stepY = pipR * 2 + Math.max(2, Math.round(height * 0.04));
+  const textX = pipR * 2 + 8;
+  const groupW = textX + fs * 2; // rough width for numbers
+  const rightOffset = Math.round(width * 0.1); // shift a bit to the right
+  const groupX = width - groupW + rightOffset
+
   return (
     <g>
       <rect x={0} y={0} width={width} height={height} rx={r} fill="#fafafa" stroke="#d1d5db" />
-      <text x={pad} y={height / 2} fontSize={10} fill="#111827" dominantBaseline="middle">
+      {/* HP */}
+      <text x={pad} y={height / 2} fontSize={Math.max(10, Math.round(height * 0.26))} fill="#111827" dominantBaseline="middle">
         HP {player.life}
       </text>
-      <g transform={`translate(${width - pad - 48}, ${pad})`}>
-        <circle cx={6} cy={6} r={4} fill="#16a34a" />
-        <text x={16} y={8} fontSize={10} fill="#111827">{player.mana.green}</text>
-        <g transform="translate(0, 12)">
-          <circle cx={6} cy={6} r={4} fill="#ef4444" />
-          <text x={16} y={8} fontSize={10} fill="#111827">{player.mana.red}</text>
+      {/* Mana (larger) */}
+      <g transform={`translate(${groupX}, ${pad})`}>
+        {/* Green */}
+        <circle cx={pipR} cy={pipR} r={pipR} fill="#16a34a" />
+        <text x={textX} y={pipR} dominantBaseline="middle" fontSize={fs} fill="#111827">{player.mana.green}</text>
+        {/* Red */}
+        <g transform={`translate(0, ${stepY})`}>
+          <circle cx={pipR} cy={pipR} r={pipR} fill="#ef4444" />
+          <text x={textX} y={pipR} dominantBaseline="middle" fontSize={fs} fill="#111827">{player.mana.red}</text>
         </g>
-        <g transform="translate(0, 24)">
-          <circle cx={6} cy={6} r={4} fill="#3b82f6" />
-          <text x={16} y={8} fontSize={10} fill="#111827">{player.mana.blue}</text>
+        {/* Blue */}
+        <g transform={`translate(0, ${stepY * 2})`}>
+          <circle cx={pipR} cy={pipR} r={pipR} fill="#3b82f6" />
+          <text x={textX} y={pipR} dominantBaseline="middle" fontSize={fs} fill="#111827">{player.mana.blue}</text>
         </g>
       </g>
     </g>
   );
 };
-
