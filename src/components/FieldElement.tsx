@@ -19,6 +19,10 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   const CPU_SEAT_VISIBLE_W_RATIO = 0.8; // CPUの見かけの横幅を統一（やや広め）
   const CARD_WIDTH_RATIO = 0.18;
   const OPEN_CARD_GAP = 24;
+  // CPUの手札を盤面外に押し出すオフセット量（席ごとに独立指定）
+  const CPU_HIDE_OFFSET_TOP_PX = 150;
+  const CPU_HIDE_OFFSET_LEFT_PX = 250;
+  const CPU_HIDE_OFFSET_RIGHT_PX = 250;
 
   const padding = PADDING;
   const w = width - padding * 2;
@@ -35,8 +39,13 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
   const centerX = w / 2;
   const centerY = h / 2;
-  // Unified card width across field and hands (larger than before)
+  // Unified card size across field and hands
   const cardW = Math.min(w, h) * CARD_WIDTH_RATIO;
+  const cardH = Math.round(cardW * Math.SQRT2);
+  // hide offsets per seat
+  const cpuHideTop = CPU_HIDE_OFFSET_TOP_PX;
+  const cpuHideLeft = CPU_HIDE_OFFSET_LEFT_PX;
+  const cpuHideRight = CPU_HIDE_OFFSET_RIGHT_PX;
 
   // helper: wrap children markup into standalone SVG and return data URL
   const toSvgDataUrl = (inner: React.ReactElement, boxW: number, boxH: number) => {
@@ -89,7 +98,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
-      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8, cpuSeatW, seatH)}>
+      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop, cpuSeatW, seatH)}>
         <image
           href={toSvgDataUrl(
             <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />,
@@ -102,7 +111,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       </g>
 
       {/* Left (CPU 2) */}
-      <g transform={seatTransform('left', 8, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
+      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
         <image
           href={toSvgDataUrl(
             <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
@@ -115,7 +124,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       </g>
 
       {/* Right (CPU 3) */}
-      <g transform={seatTransform('right', w - cpuSeatW - 8, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
+      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
         <image
           href={toSvgDataUrl(
             <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
