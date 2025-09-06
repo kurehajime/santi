@@ -6,6 +6,7 @@ export const getColor = (cardId: CardId | null): "green" | "red" | "blue" | unde
     return CARDS.find(c => c.id === cardId)?.color;
 }
 
+// XプレイヤーにY×１ダメージ
 export const damageByColor = (_gameState: GameManager, myColor: "green" | "red" | "blue", targetColor: "green" | "red" | "blue"): [number, number, number, number] => {
     const damages: [number, number, number, number] = [0, 0, 0, 0];
     const mana = _gameState.players[_gameState.turn].mana[myColor];
@@ -13,8 +14,19 @@ export const damageByColor = (_gameState: GameManager, myColor: "green" | "red" 
         const color = getColor(_gameState.players[i].openCard);
         if (color === targetColor) {
             damages[i] = 1 * mana;
-        } else {
-            damages[i] = 0;
+        }
+    }
+    return damages;
+}
+
+// Xプレイヤーに2の[Xプレイヤーの数]乗ダメージ	
+export const damagePowByColor = (_gameState: GameManager, targetColor: "green" | "red" | "blue"): [number, number, number, number] => {
+    const damages: [number, number, number, number] = [0, 0, 0, 0];
+    const colorCount = _gameState.players.filter(p => getColor(p.openCard) === targetColor).length;
+    const damage = Math.pow(2, colorCount);
+    for (let i = 0; i < 4; i++) {
+        if (getColor(_gameState.players[i].openCard) === targetColor) {
+            damages[i] = damage;
         }
     }
     return damages;

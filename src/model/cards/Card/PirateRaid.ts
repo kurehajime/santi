@@ -1,6 +1,8 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
+import { GameManager } from '../../GameManager';
+import { damagePowByColor } from './cardUtil';
 
 export class PirateRaid extends Card {
   constructor() {
@@ -12,6 +14,9 @@ export class PirateRaid extends Card {
       text: '赤プレイヤーに2の[赤プレイヤーの数]乗ダメージ',
       isFixed: false,
     });
+  }
+  damage(_gameState: GameManager): [number, number, number, number] {
+    return damagePowByColor(_gameState, "red");
   }
 }
 
