@@ -3,7 +3,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import type { GameManager } from '../model/GameManager';
 import { PlayerFieldElement } from './PlayerFieldElement';
 import { CpuFieldElement } from './CpuFieldElement';
-import { CardElement } from './CardElement';
 
 type Props = {
   gm: GameManager;
@@ -15,10 +14,8 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   // Layout constants
   const PADDING = 16;
   const SEAT_FOOTPRINT_RATIO = 0.9; // general seat box width ratio
-  const SIDE_SEAT_H_RATIO = 0.28; // legacy side seat visible width (kept for reference)
   const CPU_SEAT_VISIBLE_W_RATIO = 0.8; // CPUの見かけの横幅を統一（やや広め）
   const CARD_WIDTH_RATIO = 0.18;
-  const OPEN_CARD_GAP = 24;
   // CPUの手札を盤面外に押し出すオフセット量（席ごとに独立指定）
   const CPU_HIDE_OFFSET_TOP_PX = 150;
   const CPU_HIDE_OFFSET_LEFT_PX = 250;
@@ -35,14 +32,10 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   const seatW = w * SEAT_FOOTPRINT_RATIO;
   const seatH = sectionH * SEAT_FOOTPRINT_RATIO;
   const sideSeatW = seatH; // for left/right, vertical depth before rotation
-  const sideSeatH = w * SIDE_SEAT_H_RATIO; // not used for width unification, kept for reference
   const cpuSeatW = w * CPU_SEAT_VISIBLE_W_RATIO; // unified visible width for all CPU seats
 
-  const centerX = w / 2;
-  const centerY = h / 2;
   // Unified card size across field and hands
   const cardW = Math.min(w, h) * CARD_WIDTH_RATIO;
-  const cardH = Math.round(cardW * Math.SQRT2);
   // hide offsets per seat
   const cpuHideTop = CPU_HIDE_OFFSET_TOP_PX;
   const cpuHideLeft = CPU_HIDE_OFFSET_LEFT_PX;
@@ -77,25 +70,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       {/* Background */}
       <rect x={0} y={0} width={w} height={h} rx={12} fill="#fef08a" stroke="#facc15" />
 
-      {/* Open cards around center (no deck) */}
-      <g aria-label="open-cards">
-        {/* top */}
-        <g transform={`translate(${centerX - cardW / 2}, ${centerY - cardW * Math.SQRT2 - OPEN_CARD_GAP})`}>
-          <CardElement id={gm.players[1]?.openCard ?? null} width={cardW} faceUp={!!gm.players[1]?.openCard} labelFallback="カード" />
-        </g>
-        {/* left */}
-        <g transform={`translate(${centerX - cardW * 1.5 - OPEN_CARD_GAP}, ${centerY - (cardW * Math.SQRT2) / 2})`}>
-          <CardElement id={gm.players[2]?.openCard ?? null} width={cardW} faceUp={!!gm.players[2]?.openCard} labelFallback="カード" />
-        </g>
-        {/* right */}
-        <g transform={`translate(${centerX + cardW * 0.5 + OPEN_CARD_GAP}, ${centerY - (cardW * Math.SQRT2) / 2})`}>
-          <CardElement id={gm.players[3]?.openCard ?? null} width={cardW} faceUp={!!gm.players[3]?.openCard} labelFallback="カード" />
-        </g>
-        {/* bottom */}
-        <g transform={`translate(${centerX - cardW / 2}, ${centerY + OPEN_CARD_GAP})`}>
-          <CardElement id={gm.players[0]?.openCard ?? null} width={cardW} faceUp={!!gm.players[0]?.openCard} labelFallback="カード" />
-        </g>
-      </g>
+      {/* Open cards moved into each seat component */}
 
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
@@ -149,6 +124,8 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
           height={seatH}
         />
       </g>
+
+      {/* Open cards are rendered inside each seat component */}
     </g>
   );
 };

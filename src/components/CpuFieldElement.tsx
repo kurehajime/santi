@@ -35,8 +35,18 @@ export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, width,
   const availableW = width - gap * 2;
   const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
+  // Open card placement: centered above the hand row (unified rule for all seats)
+  const handSpanCenterLeft = handX + (n > 0 ? ((n - 1) * stepX) / 2 : (availableW - cardW) / 2);
+  const ocExtraGap = Math.round(cardH * 0.7);
+  const ocX = Math.round(handSpanCenterLeft);
+  const ocY = Math.max(0, handY - cardH - gap - ocExtraGap);
+
   return (
     <g>
+      {/* Open card */}
+      <g transform={`translate(${ocX}, ${ocY})`} aria-label={`${seat}-open`}>
+        <CardElement id={player.openCard ?? null} width={cardW} faceUp={!!player.openCard} labelFallback="カード" />
+      </g>
       {/* Status */}
       <g transform={`translate(${gap}, ${gap})`}>
         <StatusElement player={player} width={statusW} height={statusH} />
