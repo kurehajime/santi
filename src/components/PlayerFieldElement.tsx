@@ -9,18 +9,14 @@ type Props = {
   gm: GameManager;
   seat: Seat;
   playerIndex: number; // human player index (usually 0)
-  x: number;
-  y: number;
   width: number;
   height: number;
   cardWidth?: number; // unified card width
 };
 
-export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y, width, height, cardWidth }) => {
+export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, width, height, cardWidth }) => {
   const player = gm.players[playerIndex];
   if (!player) return null;
-
-  const rotation = 0; // bottom-facing
 
   const localMin = Math.min(width, height);
   const cardW = cardWidth ?? localMin * 0.22;
@@ -40,7 +36,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, 
   const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
   return (
-    <g transform={`translate(${x}, ${y}) rotate(${rotation} ${width / 2} ${height / 2})`}>
+    <g>
       {/* Status */}
       <g transform={`translate(${gap}, ${gap})`}>
         <StatusElement player={player} width={statusW} height={statusH} />
@@ -57,4 +53,3 @@ export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, 
     </g>
   );
 };
-

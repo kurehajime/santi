@@ -9,18 +9,14 @@ type Props = {
   gm: GameManager;
   seat: Seat;
   playerIndex: number; // cpu player index
-  x: number;
-  y: number;
   width: number; // footprint width before rotation
   height: number; // footprint height before rotation
   cardWidth?: number; // unified card width
 };
 
-export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y, width, height, cardWidth }) => {
+export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, width, height, cardWidth }) => {
   const player = gm.players[playerIndex];
   if (!player) return null;
-
-  const rotation = seat === 'top' ? 180 : seat === 'left' ? 90 : -90;
 
   const localMin = Math.min(width, height);
   const cardW = cardWidth ?? localMin * 0.22;
@@ -49,7 +45,7 @@ export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y, 
   }
 
   return (
-    <g transform={`translate(${x}, ${y}) rotate(${rotation} ${width / 2} ${height / 2})`}>
+    <g>
       {/* Status */}
       <g transform={`translate(${gap}, ${gap})`}>
         <StatusElement player={player} width={statusW} height={statusH} />
@@ -66,4 +62,3 @@ export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y, 
     </g>
   );
 };
-
