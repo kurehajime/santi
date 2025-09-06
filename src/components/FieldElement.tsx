@@ -1,6 +1,7 @@
 import React from 'react';
 import type { GameManager } from '../model/GameManager';
-import { UserFieldElement } from './UserFieldElement';
+import { PlayerFieldElement } from './PlayerFieldElement';
+import { CpuFieldElement } from './CpuFieldElement';
 import { CardElement } from './CardElement';
 
 type Props = {
@@ -24,8 +25,8 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
   const centerX = w / 2;
   const centerY = h / 2;
-
-  const openCardW = Math.min(w, h) * 0.14;
+  // Unified card width across field and hands (larger than before)
+  const cardW = Math.min(w, h) * 0.18;
 
   return (
     <g transform={`translate(${padding}, ${padding})`}>
@@ -35,26 +36,26 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       {/* Open cards around center (no deck) */}
       <g aria-label="open-cards">
         {/* top */}
-        <g transform={`translate(${centerX - openCardW / 2}, ${centerY - openCardW * Math.SQRT2 - 24})`}>
-          <CardElement id={gm.players[1]?.openCard ?? null} width={openCardW} faceUp={!!gm.players[1]?.openCard} labelFallback="カード" />
+        <g transform={`translate(${centerX - cardW / 2}, ${centerY - cardW * Math.SQRT2 - 24})`}>
+          <CardElement id={gm.players[1]?.openCard ?? null} width={cardW} faceUp={!!gm.players[1]?.openCard} labelFallback="カード" />
         </g>
         {/* left */}
-        <g transform={`translate(${centerX - openCardW * 1.5 - 24}, ${centerY - (openCardW * Math.SQRT2) / 2})`}>
-          <CardElement id={gm.players[2]?.openCard ?? null} width={openCardW} faceUp={!!gm.players[2]?.openCard} labelFallback="カード" />
+        <g transform={`translate(${centerX - cardW * 1.5 - 24}, ${centerY - (cardW * Math.SQRT2) / 2})`}>
+          <CardElement id={gm.players[2]?.openCard ?? null} width={cardW} faceUp={!!gm.players[2]?.openCard} labelFallback="カード" />
         </g>
         {/* right */}
-        <g transform={`translate(${centerX + openCardW * 0.5 + 24}, ${centerY - (openCardW * Math.SQRT2) / 2})`}>
-          <CardElement id={gm.players[3]?.openCard ?? null} width={openCardW} faceUp={!!gm.players[3]?.openCard} labelFallback="カード" />
+        <g transform={`translate(${centerX + cardW * 0.5 + 24}, ${centerY - (cardW * Math.SQRT2) / 2})`}>
+          <CardElement id={gm.players[3]?.openCard ?? null} width={cardW} faceUp={!!gm.players[3]?.openCard} labelFallback="カード" />
         </g>
         {/* bottom */}
-        <g transform={`translate(${centerX - openCardW / 2}, ${centerY + 24})`}>
-          <CardElement id={gm.players[0]?.openCard ?? null} width={openCardW} faceUp={!!gm.players[0]?.openCard} labelFallback="カード" />
+        <g transform={`translate(${centerX - cardW / 2}, ${centerY + 24})`}>
+          <CardElement id={gm.players[0]?.openCard ?? null} width={cardW} faceUp={!!gm.players[0]?.openCard} labelFallback="カード" />
         </g>
       </g>
 
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
-      <UserFieldElement
+      <CpuFieldElement
         gm={gm}
         seat="top"
         playerIndex={1}
@@ -62,10 +63,11 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
         y={8}
         width={seatW}
         height={seatH}
+        cardWidth={cardW}
       />
 
       {/* Left (CPU 2) */}
-      <UserFieldElement
+      <CpuFieldElement
         gm={gm}
         seat="left"
         playerIndex={2}
@@ -73,10 +75,11 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
         y={(h - sideSeatH) / 2}
         width={sideSeatW}
         height={sideSeatH}
+        cardWidth={cardW}
       />
 
       {/* Right (CPU 3) */}
-      <UserFieldElement
+      <CpuFieldElement
         gm={gm}
         seat="right"
         playerIndex={3}
@@ -84,10 +87,11 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
         y={(h - sideSeatH) / 2}
         width={sideSeatW}
         height={sideSeatH}
+        cardWidth={cardW}
       />
 
       {/* Bottom (YOU) */}
-      <UserFieldElement
+      <PlayerFieldElement
         gm={gm}
         seat="bottom"
         playerIndex={0}
@@ -95,6 +99,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
         y={h - seatH - 8}
         width={seatW}
         height={seatH}
+        cardWidth={cardW}
       />
     </g>
   );

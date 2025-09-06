@@ -3,55 +3,46 @@ import type { GameManager } from '../model/GameManager';
 import { CardElement } from './CardElement';
 import { StatusElement } from './StatusElement';
 
-type Seat = 'bottom' | 'top' | 'left' | 'right';
+type Seat = 'top' | 'left' | 'right';
 
 type Props = {
   gm: GameManager;
   seat: Seat;
-  playerIndex: number;
+  playerIndex: number; // cpu player index
   x: number;
   y: number;
-  width: number; // footprint width of the seat area (before rotation)
-  height: number; // footprint height of the seat area (before rotation)
-  cardWidth?: number; // unified card width override
+  width: number; // footprint width before rotation
+  height: number; // footprint height before rotation
+  cardWidth?: number; // unified card width
 };
 
-export const UserFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y, width, height, cardWidth }) => {
+export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y, width, height, cardWidth }) => {
   const player = gm.players[playerIndex];
   if (!player) return null;
 
-  // Rotate the entire seat so text orientation matches the diagram.
-  // Left should be clockwise (90), Right should be counter-clockwise (-90).
-  const rotation = seat === 'bottom' ? 0 : seat === 'top' ? 180 : seat === 'left' ? 90 : -90;
+  const rotation = seat === 'top' ? 180 : seat === 'left' ? 90 : -90;
 
-  // Basic sizes
   const localMin = Math.min(width, height);
-  const cardW = cardWidth ?? localMin * 0.22; // unified width if provided
+  const cardW = cardWidth ?? localMin * 0.22;
   const cardH = Math.round(cardW * Math.SQRT2);
   const gap = localMin * 0.04;
   const statusW = localMin * 0.36;
   const statusH = localMin * 0.22;
 
-  // Layout inside the seat local coords (not rotated)
-  // Status on one side, hand on the opposite, simple for placeholder
-  const isHuman = playerIndex === 0;
   const handIds = player.hands;
-  const showBack = !isHuman;
-
+  const showBack = true; // CPU hand is face-down
   const n = Math.min(5, handIds.length);
 
-  // Layout strategies by seat for better fit with larger cards
   const isSide = seat === 'left' || seat === 'right';
 
-  // Compute hand placement and spacing
+  // Compute hand placement
   let handX = gap;
   let handY = statusH + gap * 2;
   let availableW = width - gap * 2;
   let stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
   if (isSide) {
-    // Place status on the left, hand to the right, vertically centered
-    handX = statusW + gap * 2;
+    handX = statusW + gap * 2; // status left, hand right
     handY = Math.max(gap, (height - cardH) / 2);
     availableW = width - statusW - gap * 3;
     stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
@@ -59,9 +50,6 @@ export const UserFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y,
 
   return (
     <g transform={`translate(${x}, ${y}) rotate(${rotation} ${width / 2} ${height / 2})`}>
-      {/* seat backdrop (debug) */}
-      {/* <rect x={0} y={0} width={width} height={height} fill="none" stroke="#334155" /> */}
-
       {/* Status */}
       <g transform={`translate(${gap}, ${gap})`}>
         <StatusElement player={player} width={statusW} height={statusH} />
@@ -78,3 +66,4 @@ export const UserFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, x, y,
     </g>
   );
 };
+
