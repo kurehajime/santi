@@ -37,9 +37,8 @@ export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, width,
 
   // Open card placement: centered above the hand row (unified rule for all seats)
   const handSpanCenterLeft = handX + (n > 0 ? ((n - 1) * stepX) / 2 : (availableW - cardW) / 2);
-  const ocExtraGap = Math.round(cardH * 0.7);
   const ocX = Math.round(handSpanCenterLeft);
-  const ocY = Math.max(0, handY - cardH - gap - ocExtraGap);
+  const ocY = cardH * -0.8;
 
   return (
     <g>
