@@ -17,9 +17,15 @@ export const StatusElement: React.FC<Props> = ({ player, width, height }) => {
   return (
     <g>
       <rect x={0} y={0} width={width} height={height} rx={r} fill="#fafafa" stroke="#d1d5db" />
-      {/* HP */}
-      <text x={pad} y={height / 2} fontSize={Math.max(10, Math.round(height * 0.26))} fill="#111827" dominantBaseline="middle">
-        HP {player.life}
+      {/* HP (bigger, heart notation) */}
+      <text
+        x={pad}
+        y={height / 2}
+        fontSize={Math.max(12, Math.round(height * 0.34))}
+        fill="#111827"
+        dominantBaseline="middle"
+      >
+        {'\u2665'}{player.life}
       </text>
       {/* Mana (larger) */}
       <g transform={`translate(${groupX}, ${pad})`}>
