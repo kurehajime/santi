@@ -13,7 +13,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   // Layout constants
   const PADDING = 16;
   const SEAT_FOOTPRINT_RATIO = 0.9; // general seat box width ratio
-  const CPU_SEAT_VISIBLE_W_RATIO = 0.8; // CPUの見かけの横幅を統一（やや広め）
+  const CPU_SEAT_VISIBLE_W_RATIO = 0.6; // CPUの見かけの横幅を統一（やや広め）
   const CARD_WIDTH_RATIO = 0.18;
   // CPUの手札を盤面外に押し出すオフセット量（席ごとに独立指定）
   const CPU_HIDE_OFFSET_TOP_PX = 100;

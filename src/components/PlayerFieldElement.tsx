@@ -24,6 +24,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, wid
   const gap = localMin * 0.04;
   const statusW = localMin * 0.36;
   const statusH = localMin * 0.22;
+  const STATUS_SCALE = 1.2;
 
   const handIds = player.hands;
   const showBack = false; // player hand is face-up
@@ -31,7 +32,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, wid
 
   // Hand placement below status
   const handX = gap;
-  const handY = statusH + gap * 2;
+  const handY = statusH * STATUS_SCALE + gap * 2;
   const availableW = width - gap * 2;
   const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
@@ -46,8 +47,8 @@ export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, wid
       <g transform={`translate(${ocX}, ${ocY})`} aria-label={`${seat}-open`}>
         <CardElement id={player.openCard ?? null} width={cardW} faceUp={!!player.openCard} labelFallback="カード" />
       </g>
-      {/* Status */}
-      <g transform={`translate(${gap}, ${gap})`}>
+      {/* Status (scaled) */}
+      <g transform={`translate(${gap}, ${gap}) scale(${STATUS_SCALE})`}>
         <StatusElement player={player} width={statusW} height={statusH} />
       </g>
 
