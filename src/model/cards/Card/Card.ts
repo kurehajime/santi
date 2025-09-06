@@ -31,7 +31,7 @@ export abstract class Card {
     return { green: 0, red: 0, blue: 0 };
   }
   // 与えるダメージを計算する
-  damage(_gameState: GameManager): number[] {
+  damage(_gameState: GameManager): [number, number, number, number] {
     return [0, 0, 0, 0];
   }
   // プレイ可能なカードを制限する
@@ -39,7 +39,7 @@ export abstract class Card {
     return hands;
   }
   // ダメージを受けたときに他者にダメージを与える
-  hookDamageCounter(_gameState: GameManager, _damage: number): number[] {
+  hookDamageCounter(_gameState: GameManager, _damage: number): [number, number, number, number] {
     return [0, 0, 0, 0];
   }
   // ダメージをキャンセルする

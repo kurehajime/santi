@@ -1,6 +1,8 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
+import { GameManager } from '../../GameManager';
+import { damageByColor } from './cardUtil';
 
 export class Swordsman extends Card {
   constructor() {
@@ -12,6 +14,9 @@ export class Swordsman extends Card {
       text: '緑プレイヤーに🔴×1ダメージ',
       isFixed: true,
     });
+  }
+  damage(_gameState: GameManager): [number, number, number, number] {
+    return damageByColor(_gameState, 'red', 'green');
   }
 }
 

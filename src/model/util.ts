@@ -1,4 +1,8 @@
 // Generic deep clone for plain objects and arrays.
+
+import { CARDS } from "./cards";
+import { CardId } from "./types";
+
 // Note: Not intended for functions, Dates, Maps, Sets, etc.
 export const deepClone = <T>(obj: T): T => {
   if (obj === null || typeof obj !== 'object') return obj;
