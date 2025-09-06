@@ -29,20 +29,11 @@ export const CpuFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, width,
   const showBack = true; // CPU hand is face-down
   const n = Math.min(5, handIds.length);
 
-  const isSide = seat === 'left' || seat === 'right';
-
-  // Compute hand placement
-  let handX = gap;
-  let handY = statusH + gap * 2;
-  let availableW = width - gap * 2;
-  let stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
-
-  if (isSide) {
-    handX = statusW + gap * 2; // status left, hand right
-    handY = Math.max(gap, (height - cardH) / 2);
-    availableW = width - statusW - gap * 3;
-    stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
-  }
+  // Unified layout with Player: status on top-left, hand below, horizontal spread
+  const handX = gap;
+  const handY = statusH + gap * 2;
+  const availableW = width - gap * 2;
+  const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
   return (
     <g>

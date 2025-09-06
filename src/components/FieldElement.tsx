@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import type { GameManager } from '../model/GameManager';
 import { PlayerFieldElement } from './PlayerFieldElement';
 import { CpuFieldElement } from './CpuFieldElement';
@@ -13,8 +14,9 @@ type Props = {
 export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   // Layout constants
   const PADDING = 16;
-  const SEAT_FOOTPRINT_RATIO = 0.9;
-  const SIDE_SEAT_H_RATIO = 0.28;
+  const SEAT_FOOTPRINT_RATIO = 0.9; // general seat box width ratio
+  const SIDE_SEAT_H_RATIO = 0.28; // legacy side seat visible width (kept for reference)
+  const CPU_SEAT_VISIBLE_W_RATIO = 0.8; // CPUの見かけの横幅を統一（やや広め）
   const CARD_WIDTH_RATIO = 0.18;
   const OPEN_CARD_GAP = 24;
 
@@ -27,13 +29,25 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   // seat footprints
   const seatW = w * SEAT_FOOTPRINT_RATIO;
   const seatH = sectionH * SEAT_FOOTPRINT_RATIO;
-  const sideSeatW = seatH; // for left/right, use smaller footprint
-  const sideSeatH = w * SIDE_SEAT_H_RATIO;
+  const sideSeatW = seatH; // for left/right, vertical depth before rotation
+  const sideSeatH = w * SIDE_SEAT_H_RATIO; // not used for width unification, kept for reference
+  const cpuSeatW = w * CPU_SEAT_VISIBLE_W_RATIO; // unified visible width for all CPU seats
 
   const centerX = w / 2;
   const centerY = h / 2;
   // Unified card width across field and hands (larger than before)
   const cardW = Math.min(w, h) * CARD_WIDTH_RATIO;
+
+  // helper: wrap children markup into standalone SVG and return data URL
+  const toSvgDataUrl = (inner: React.ReactElement, boxW: number, boxH: number) => {
+    const innerMarkup = renderToStaticMarkup(inner);
+    const fontFamily = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial';
+    const svg = `<?xml version=\"1.0\" encoding=\"UTF-8\"?>` +
+      `<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${boxW}\" height=\"${boxH}\" viewBox=\"0 0 ${boxW} ${boxH}\" style=\"font-family: ${fontFamily}\">` +
+      innerMarkup +
+      `</svg>`;
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  };
 
   // helper: compute transform string for seat
   const seatTransform = (
@@ -75,50 +89,54 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
-      <g transform={seatTransform('top', (w - seatW) / 2, 8, seatW, seatH)}>
-        <CpuFieldElement
-          gm={gm}
-          seat="top"
-          playerIndex={1}
-          width={seatW}
+      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8, cpuSeatW, seatH)}>
+        <image
+          href={toSvgDataUrl(
+            <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />,
+            cpuSeatW,
+            seatH
+          )}
+          width={cpuSeatW}
           height={seatH}
-          cardWidth={cardW}
         />
       </g>
 
       {/* Left (CPU 2) */}
-      <g transform={seatTransform('left', 8, (h - sideSeatH) / 2, sideSeatW, sideSeatH)}>
-        <CpuFieldElement
-          gm={gm}
-          seat="left"
-          playerIndex={2}
-          width={sideSeatW}
-          height={sideSeatH}
-          cardWidth={cardW}
+      <g transform={seatTransform('left', 8, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
+        <image
+          href={toSvgDataUrl(
+            <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
+            cpuSeatW,
+            sideSeatW
+          )}
+          width={cpuSeatW}
+          height={sideSeatW}
         />
       </g>
 
       {/* Right (CPU 3) */}
-      <g transform={seatTransform('right', w - sideSeatW - 8, (h - sideSeatH) / 2, sideSeatW, sideSeatH)}>
-        <CpuFieldElement
-          gm={gm}
-          seat="right"
-          playerIndex={3}
-          width={sideSeatW}
-          height={sideSeatH}
-          cardWidth={cardW}
+      <g transform={seatTransform('right', w - cpuSeatW - 8, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
+        <image
+          href={toSvgDataUrl(
+            <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
+            cpuSeatW,
+            sideSeatW
+          )}
+          width={cpuSeatW}
+          height={sideSeatW}
         />
       </g>
 
       {/* Bottom (YOU) */}
       <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8, seatW, seatH)}>
-        <PlayerFieldElement
-          gm={gm}
-          seat="bottom"
-          playerIndex={0}
+        <image
+          href={toSvgDataUrl(
+            <PlayerFieldElement gm={gm} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />,
+            seatW,
+            seatH
+          )}
           width={seatW}
           height={seatH}
-          cardWidth={cardW}
         />
       </g>
     </g>
