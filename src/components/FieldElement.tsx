@@ -23,6 +23,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   const CPU_HIDE_OFFSET_TOP_PX = 150;
   const CPU_HIDE_OFFSET_LEFT_PX = 250;
   const CPU_HIDE_OFFSET_RIGHT_PX = 250;
+  const CPU_SIDE_Y_SHIFT_PX = 80; // 左右CPUを上方向へ寄せる量（px）
 
   const padding = PADDING;
   const w = width - padding * 2;
@@ -111,7 +112,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       </g>
 
       {/* Left (CPU 2) */}
-      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
+      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
         <image
           href={toSvgDataUrl(
             <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
@@ -124,7 +125,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       </g>
 
       {/* Right (CPU 3) */}
-      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2, cpuSeatW, sideSeatW)}>
+      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
         <image
           href={toSvgDataUrl(
             <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />,
