@@ -16,10 +16,10 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   const CPU_SEAT_VISIBLE_W_RATIO = 0.8; // CPUの見かけの横幅を統一（やや広め）
   const CARD_WIDTH_RATIO = 0.18;
   // CPUの手札を盤面外に押し出すオフセット量（席ごとに独立指定）
-  const CPU_HIDE_OFFSET_TOP_PX = 0;
+  const CPU_HIDE_OFFSET_TOP_PX = 100;
   const CPU_HIDE_OFFSET_LEFT_PX = 200;
   const CPU_HIDE_OFFSET_RIGHT_PX = 200;
-  const CPU_SIDE_Y_SHIFT_PX = -3; // 左右CPUを上方向へ寄せる量（px）
+  const CPU_SIDE_Y_SHIFT_PX = 50; // 左右CPUを上方向へ寄せる量（px）
 
   const padding = PADDING;
   const w = width - padding * 2;
