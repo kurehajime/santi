@@ -101,7 +101,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
                 const innerPad = Math.max(4, Math.round(width * 0.02));
                 const foW = Math.max(0, (width - padX * 2) - innerPad * 2);
                 const foH = Math.max(0, rulesH - innerPad * 2);
-                const fontPx = Math.max(10, Math.round(width * 0.045));
+                const fontPx = Math.round(width * 0.07);
                 return (
                   <foreignObject x={innerPad} y={innerPad} width={foW} height={foH}>
                     <div
