@@ -1,5 +1,4 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import type { GameManager } from '../model/GameManager';
 import { PlayerFieldElement } from './PlayerFieldElement';
 import { CpuFieldElement } from './CpuFieldElement';
@@ -36,23 +35,12 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
   // Unified card size across field and hands
   const cardW = Math.min(w, h) * CARD_WIDTH_RATIO;
-  const cardH = Math.round(cardW * Math.SQRT2);
-  const OPEN_TOP_MARGIN = Math.round(cardH * 1.0); // extra headroom inside each seat image
   // hide offsets per seat
   const cpuHideTop = CPU_HIDE_OFFSET_TOP_PX;
   const cpuHideLeft = CPU_HIDE_OFFSET_LEFT_PX;
   const cpuHideRight = CPU_HIDE_OFFSET_RIGHT_PX;
 
-  // helper: wrap children markup into standalone SVG and return data URL
-  const toSvgDataUrl = (inner: React.ReactElement, boxW: number, boxH: number) => {
-    const innerMarkup = renderToStaticMarkup(inner);
-    const fontFamily = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial';
-    const svg = `<?xml version=\"1.0\" encoding=\"UTF-8\"?>` +
-      `<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${boxW}\" height=\"${boxH}\" viewBox=\"0 0 ${boxW} ${boxH}\" style=\"font-family: ${fontFamily}\">` +
-      innerMarkup +
-      `</svg>`;
-    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  };
+  // removed dataURL image wrapper; render seats inline to support foreignObject
 
   // helper: compute transform string for seat
   const seatTransform = (
@@ -76,63 +64,23 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
 
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
-      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop - OPEN_TOP_MARGIN, cpuSeatW, seatH + OPEN_TOP_MARGIN)}>
-        <image
-          href={toSvgDataUrl(
-            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
-              <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />
-            </g>,
-            cpuSeatW,
-            seatH + OPEN_TOP_MARGIN
-          )}
-          width={cpuSeatW}
-          height={seatH + OPEN_TOP_MARGIN}
-        />
+      <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop, cpuSeatW, seatH)}>
+        <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />
       </g>
 
       {/* Left (CPU 2) */}
-      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX - OPEN_TOP_MARGIN, cpuSeatW, sideSeatW + OPEN_TOP_MARGIN)}>
-        <image
-          href={toSvgDataUrl(
-            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
-              <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
-            </g>,
-            cpuSeatW,
-            sideSeatW + OPEN_TOP_MARGIN
-          )}
-          width={cpuSeatW}
-          height={sideSeatW + OPEN_TOP_MARGIN}
-        />
+      <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
+        <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
       </g>
 
       {/* Right (CPU 3) */}
-      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX - OPEN_TOP_MARGIN, cpuSeatW, sideSeatW + OPEN_TOP_MARGIN)}>
-        <image
-          href={toSvgDataUrl(
-            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
-              <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
-            </g>,
-            cpuSeatW,
-            sideSeatW + OPEN_TOP_MARGIN
-          )}
-          width={cpuSeatW}
-          height={sideSeatW + OPEN_TOP_MARGIN}
-        />
+      <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
+        <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
       </g>
 
       {/* Bottom (YOU) */}
-      <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8 - OPEN_TOP_MARGIN, seatW, seatH + OPEN_TOP_MARGIN)}>
-        <image
-          href={toSvgDataUrl(
-            <g transform={`translate(0, ${OPEN_TOP_MARGIN})`}>
-              <PlayerFieldElement gm={gm} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />
-            </g>,
-            seatW,
-            seatH + OPEN_TOP_MARGIN
-          )}
-          width={seatW}
-          height={seatH + OPEN_TOP_MARGIN}
-        />
+      <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8, seatW, seatH)}>
+        <PlayerFieldElement gm={gm} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />
       </g>
 
       {/* Open cards are rendered inside each seat component */}

@@ -93,13 +93,35 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
             )}
           </g>
 
-          {/* rules text */}
+          {/* rules text (wrapped via foreignObject) */}
           <g transform={`translate(${padX}, ${padY + headerH + artH + padY + actionH + padY})`}>
             <rect x={0} y={0} width={width - padX * 2} height={rulesH} rx={6} fill={panelBg} stroke={panelStroke} />
             {id && (
-              <text x={padX * 0.6} y={Math.min(rulesH - 4, Math.round(rulesH * 0.3))} fontSize={Math.round(width * 0.045)} fill={textColor}>
-                {CARDS_MAP[id]?.text}
-              </text>
+              (() => {
+                const innerPad = Math.max(4, Math.round(width * 0.02));
+                const foW = Math.max(0, (width - padX * 2) - innerPad * 2);
+                const foH = Math.max(0, rulesH - innerPad * 2);
+                const fontPx = Math.max(10, Math.round(width * 0.045));
+                return (
+                  <foreignObject x={innerPad} y={innerPad} width={foW} height={foH}>
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        color: textColor,
+                        fontSize: fontPx,
+                        lineHeight: 1.25,
+                        whiteSpace: 'normal',
+                        wordBreak: 'break-word',
+                        overflow: 'hidden',
+                        overflowWrap: 'anywhere',
+                      }}
+                    >
+                      {CARDS_MAP[id]?.text}
+                    </div>
+                  </foreignObject>
+                );
+              })()
             )}
           </g>
         </g>
