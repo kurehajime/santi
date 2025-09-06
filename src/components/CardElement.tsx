@@ -1,6 +1,7 @@
 import React from 'react';
 import type { CardId } from '../model/types';
 import { CARDS_MAP } from '../model/cards';
+import { useCardHover } from './CardHoverContext';
 
 type Props = {
   id?: CardId | null;
@@ -44,9 +45,15 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const artR = Math.min(artW, artH) * 0.18;
   const artCX = padX + artW / 2;
   const artCY = artY + artH / 2 + artR * 0.1;
+  const { setHover } = useCardHover();
 
   return (
-    <g>
+    <g
+      onMouseEnter={() => {
+        if (faceUp && id) setHover({ id, width: width * 2 });
+      }}
+      onMouseLeave={() => setHover(null)}
+    >
       {/* card frame */}
       <rect x={0} y={0} width={width} height={height} rx={r} fill={cardBg} stroke={cardStroke} />
 
