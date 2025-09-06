@@ -58,7 +58,7 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
   return (
     <g transform={`translate(${padding}, ${padding})`}>
       {/* Background */}
-      <rect x={0} y={0} width={w} height={h} rx={12} fill="#fef08a" stroke="#facc15" />
+      <rect x={0} y={0} width={w} height={h} rx={12} fill="#e0f2fe" stroke="#93c5fd" />
 
       {/* Open cards moved into each seat component */}
 
