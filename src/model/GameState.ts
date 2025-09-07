@@ -148,6 +148,7 @@ export class GameState {
     const extendMana = handCard.extendGainMana(newState);
     newState = newState.gainMana(this.turn, extendMana);
     // ダメージを計算する
+    const prevLives = newState.players.map((p) => p.life);
     let damage = handCard.damage(newState);
     // 反撃ダメージを計算する
     const counters: [number, number, number, number][] = [];
@@ -186,6 +187,20 @@ export class GameState {
       if (newState.players[i].life === 0) {
         newState.players[i].openCard = null;
       }
+    }
+    // 撃破ボーナス: このターンのプレイヤーは、倒した敵1人につき2枚ドロー
+    const defeatedCount = newState.players.reduce((acc, p, i) => {
+      if (i === this.turn) return acc; // 自分はカウントしない
+      const wasAlive = prevLives[i] > 0;
+      const nowDead = p.life === 0;
+      return acc + (wasAlive && nowDead ? 1 : 0);
+    }, 0);
+    const drawN = Math.min(newState.deck.length, defeatedCount * 2);
+    if (drawN > 0) {
+      const drawn = newState.deck.slice(0, drawN);
+      const newDeck = newState.deck.slice(drawN);
+      newState.players[this.turn].hands = [...newState.players[this.turn].hands, ...drawn];
+      newState = new GameState({ ...newState, deck: newDeck } as GameState);
     }
     // ターンを進める（Life>0のプレイヤーまでスキップ）
     const nextAlive = (() => {

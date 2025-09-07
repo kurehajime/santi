@@ -30,7 +30,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
 
   const handIds = player.hands;
   const showBack = false; // player hand is face-up
-  const n = Math.min(5, handIds.length);
+  const n = handIds.length; // show all cards, even if more than 5
   const isMyPhase = gameState.turn === playerIndex && (gameState.mode === 'playing' || gameState.mode === 'preview');
   const playable = isMyPhase ? new Set(gameState.playableHands()) : new Set<string>();
   const isPreview = gameState.mode === 'preview';

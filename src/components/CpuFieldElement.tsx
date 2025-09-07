@@ -28,7 +28,7 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
 
   const handIds = player.hands;
   const showBack = true; // CPU hand is face-down
-  const n = Math.min(5, handIds.length);
+  const n = handIds.length; // show all cards, even if more than 5
 
   // Unified layout with Player: status on top-left, hand below, horizontal spread
   const handX = gap;
