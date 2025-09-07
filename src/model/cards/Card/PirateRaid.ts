@@ -15,8 +15,8 @@ export class PirateRaid extends Card {
       isFixed: false,
     });
   }
-  damage(_gameState: GameManager): [number, number, number, number] {
-    return damagePowByColor(_gameState, "red");
+  damage(_gm: GameManager): [number, number, number, number] {
+    return damagePowByColor(_gm, "red");
   }
 }
 

@@ -15,8 +15,8 @@ export class AxeSoldier extends Card {
       isFixed: true,
     });
   }
-  damage(_gameState: GameManager): [number, number, number, number] {
-    return damageByColor(_gameState, 'green', 'blue');
+  damage(_gm: GameManager): [number, number, number, number] {
+    return damageByColor(_gm, 'green', 'blue');
   }
 }
 

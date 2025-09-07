@@ -15,8 +15,8 @@ export class Swordsman extends Card {
       isFixed: true,
     });
   }
-  damage(_gameState: GameManager): [number, number, number, number] {
-    return damageByColor(_gameState, 'red', 'green');
+  damage(_gm: GameManager): [number, number, number, number] {
+    return damageByColor(_gm, 'red', 'green');
   }
 }
 

@@ -15,8 +15,8 @@ export class ArmyCharge extends Card {
       isFixed: false,
     });
   }
-  damage(_gameState: GameManager): [number, number, number, number] {
-    return damagePowByColor(_gameState, "green");
+  damage(_gm: GameManager): [number, number, number, number] {
+    return damagePowByColor(_gm, "green");
   }
 }
 

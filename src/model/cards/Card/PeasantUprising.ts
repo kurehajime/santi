@@ -15,8 +15,8 @@ export class PeasantUprising extends Card {
       isFixed: false,
     });
   }
-  damage(_gameState: GameManager): [number, number, number, number] {
-    return damagePowByColor(_gameState, "blue");
+  damage(_gm: GameManager): [number, number, number, number] {
+    return damagePowByColor(_gm, "blue");
   }
 }
 

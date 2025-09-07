@@ -15,13 +15,13 @@ export class BombRock extends Card {
       isFixed: false,
     });
   }
-  damage(_gameState: GameManager): [number, number, number, number] {
+  damage(_gm: GameManager): [number, number, number, number] {
     const damages: [number, number, number, number] = [0, 0, 0, 0];
-    const colorCount = _gameState.players.filter(p => getColor(p.openCard) === "green").length;
-    const mana = _gameState.players[_gameState.turn].mana;
+    const colorCount = _gm.players.filter(p => getColor(p.openCard) === "green").length;
+    const mana = _gm.players[_gm.turn].mana;
     const damage = colorCount * (mana.red);
     for (let i = 0; i < 4; i++) {
-      if (getColor(_gameState.players[i].openCard) === "green") {
+      if (getColor(_gm.players[i].openCard) === "green") {
         damages[i] = damage;
       }
     }
