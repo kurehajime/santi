@@ -38,8 +38,10 @@ export const GameElement: React.FC = () => {
           aria-label="Game Field"
           style={{ border: '1px solid #e5e7eb', borderRadius: 12, background: '#0b1020' }}
           onClick={() => {
-            // click outside cards cancels preview
-            if (gameState.mode === 'preview') setGameState((s) => s.cancelPreview());
+            // click outside cards cancels preview (only for human's preview)
+            if (gameState.mode === 'preview' && gameState.turn === 0) {
+              setGameState((s) => s.cancelPreview());
+            }
           }}
         >
           <FieldElement

@@ -34,7 +34,8 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
   const isMyPhase = gameState.turn === playerIndex && (gameState.mode === 'playing' || gameState.mode === 'preview');
   const playable = isMyPhase ? new Set(gameState.playableHands()) : new Set<string>();
   const isPreview = gameState.mode === 'preview';
-  const selectedId = isPreview ? gameState.previewCard : null;
+  const isMyPreview = isPreview && gameState.turn === playerIndex;
+  const selectedId = isMyPreview ? gameState.previewCard : null;
 
   // Hand placement below status
   const handX = gap;
@@ -55,7 +56,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
       </g>
       {/* Status (scaled) */}
       <g transform={`translate(${gap}, ${gap}) scale(${STATUS_SCALE})`}>
-        <StatusElement player={player} width={statusW} height={statusH} />
+        <StatusElement player={player} width={statusW} height={statusH} isActive={gameState.turn === playerIndex} />
       </g>
 
       {/* Hand */}

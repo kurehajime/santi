@@ -49,7 +49,7 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
       </g>
       {/* Status (scaled) */}
       <g transform={`translate(${gap}, ${gap}) scale(${STATUS_SCALE})`}>
-        <StatusElement player={player} width={statusW} height={statusH} />
+        <StatusElement player={player} width={statusW} height={statusH} isActive={gameState.turn === playerIndex} />
       </g>
 
       {/* Hand */}

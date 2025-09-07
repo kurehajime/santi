@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Player } from '../model/Player';
 
-type Props = { player: Player; width: number; height: number };
+type Props = { player: Player; width: number; height: number; isActive?: boolean };
 
-export const StatusElement: React.FC<Props> = ({ player, width, height }) => {
+export const StatusElement: React.FC<Props> = ({ player, width, height, isActive = false }) => {
   const r = Math.round(Math.min(width, height) * 0.08);
   const pad = Math.max(6, Math.round(height * 0.08));
   const pipR = Math.max(6, Math.round(height * 0.12));
@@ -14,9 +14,11 @@ export const StatusElement: React.FC<Props> = ({ player, width, height }) => {
   const rightOffset = Math.round(width * 0.1); // shift a bit to the right
   const groupX = width - groupW + rightOffset
 
+  const bgFill = isActive ? '#fffbeb' : '#fafafa';
+  const bgStroke = isActive ? '#f59e0b' : '#d1d5db';
   return (
     <g>
-      <rect x={0} y={0} width={width} height={height} rx={r} fill="#fafafa" stroke="#d1d5db" />
+      <rect x={0} y={0} width={width} height={height} rx={r} fill={bgFill} stroke={bgStroke} />
       {/* HP (bigger, heart notation) */}
       <text
         x={pad}
