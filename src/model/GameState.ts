@@ -44,15 +44,22 @@ export class GameState {
     return new GameState(src);
   }
 
-  private withPlayedCard(playerIndex: number, cardId: CardId): GameState {
-    let newState = this.clone();
+  playableHands(): CardId[] {
+    // プレイできるカードなのかチェック
     const turnPlayer = this.players[this.turn];
     const openCards = this.players.map((p) => p.openCard).flat().map(c => CARDS.filter(card => card.id === c)[0]);
-    // プレイできるカードなのかチェック
     let hands = turnPlayer.hands
     for (let openCard of openCards) {
       hands = openCard.hookEnabledPlay(this, hands);
     }
+    return hands;
+  }
+
+  private withPlayedCard(playerIndex: number, cardId: CardId): GameState {
+    let newState = this.clone();
+    const turnPlayer = this.players[this.turn];
+    // プレイできるカードなのかチェック
+    let hands = this.playableHands();
     const hand = hands.find((c) => c === cardId);
     const handCard = CARDS.find((c) => c.id === hand);
     if (!handCard) {
