@@ -1,6 +1,7 @@
 import type { CardId, Mode } from './types';
 import type { Player } from './Player';
 import { deepClone } from './util';
+import { CARDS } from './cards';
 
 export class GameState {
   readonly players: Player[];
@@ -43,18 +44,89 @@ export class GameState {
     return new GameState(src);
   }
 
-  // Immutable updaters: return new instances without mutating existing state
-  withState(state: Mode): GameState {
-    return new GameState({ ...this, mode: state });
+  private withPlayedCard(playerIndex: number, cardId: CardId): GameState {
+    let newState = this.clone();
+    const turnPlayer = this.players[this.turn];
+    const openCards = this.players.map((p) => p.openCard).flat().map(c => CARDS.filter(card => card.id === c)[0]);
+    // プレイできるカードなのかチェック
+    let hands = turnPlayer.hands
+    for (let openCard of openCards) {
+      hands = openCard.hookEnabledPlay(this, hands);
+    }
+    const hand = hands.find((c) => c === cardId);
+    const handCard = CARDS.find((c) => c.id === hand);
+    if (!handCard) {
+      throw Error(`Player ${turnPlayer} cannot play card ${cardId}`);
+    }
+    const card = CARDS.find((c) => c.id === cardId);
+    if (!card?.isFixed) {
+      newState.players[playerIndex].hands = newState.players[playerIndex].hands.filter((c) => c !== cardId);
+    }
+    newState.players[playerIndex].openCard = cardId;
+    return newState;
   }
 
-  withPreviewCard(preview: CardId | null): GameState {
-    return new GameState({ ...this, previewCard: preview });
+  private gainMana(playerIndex: number, mana: { green: number, red: number, blue: number }): GameState {
+    let newState = this.clone();
+    newState.players[playerIndex].mana = {
+      green: newState.players[playerIndex].mana.green + mana.green,
+      red: newState.players[playerIndex].mana.red + mana.red,
+      blue: newState.players[playerIndex].mana.blue + mana.blue,
+    }
+    return newState;
   }
 
-  nextTurn(): GameState {
-    const next = (this.turn + 1) % Math.max(1, this.players.length);
-    return new GameState({ ...this, turn: next });
+  // カードを出す
+  nextTurn(cardId: CardId): GameState {
+    let newState = this.clone();
+    // 手札からカードを出す
+    newState = newState.withPlayedCard(this.turn, cardId);
+    const handCard = CARDS.find((c) => c.id === cardId);
+    if (!handCard) {
+      throw Error(`Player ${this.players[this.turn]} cannot play card ${cardId}`);
+    }
+    // マナを生みだす
+    newState = newState.gainMana(this.turn, handCard.gainMana);
+    // 追加の効果でマナを生みだす
+    const extendMana = handCard.extendGainMana(newState);
+    newState = newState.gainMana(this.turn, extendMana);
+    // ダメージを計算する
+    let damage = handCard.damage(newState);
+    // 反撃ダメージを計算する
+    const counters: [number, number, number, number][] = [];
+    for (let i = 0; i < newState.players.length; i++) {
+      if (i === this.turn) continue;
+      const oc = newState.players[i].openCard;
+      if (!oc) continue;
+      const ocCard = CARDS.find((c) => c.id === oc);
+      if (!ocCard) continue;
+      const counter = ocCard.hookDamageCounter(newState, damage[i]);
+      counters.push(counter)
+    }
+    for (let counter of counters) {
+      damage = [
+        damage[0] + counter[0],
+        damage[1] + counter[1],
+        damage[2] + counter[2],
+        damage[3] + counter[3]
+      ]
+    }
+    // ダメージ無効化判定
+    for (let i = 0; i < newState.players.length; i++) {
+      if (i === this.turn) continue;
+      const oc = newState.players[i].openCard;
+      if (!oc) continue;
+      const ocCard = CARDS.find((c) => c.id === oc);
+      if (!ocCard) continue;
+      damage[i] = ocCard.hookDamageCancel(newState, damage[i]) ? 0 : damage[i];
+    }
+    // ダメージを与える
+    for (let i = 0; i < newState.players.length; i++) {
+      newState.players[i].life = Math.max(0, newState.players[i].life - damage[i]);
+    }
+    // ターンを進める
+    const next = (newState.turn + 1) % Math.max(1, newState.players.length);
+    return new GameState({ ...newState, turn: next } as GameState);
   }
 
   clone(): GameState {
