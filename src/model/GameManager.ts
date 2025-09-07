@@ -7,7 +7,7 @@ export class GameManager {
   readonly turn: number;
   readonly deck: CardId[];
   readonly previewCard: CardId | null;
-  readonly state: Mode;
+  readonly mode: Mode;
 
   constructor(gm?: GameManager) {
     if (gm) {
@@ -15,13 +15,13 @@ export class GameManager {
       this.turn = gm.turn;
       this.deck = deepClone(gm.deck);
       this.previewCard = gm.previewCard;
-      this.state = gm.state;
+      this.mode = gm.mode;
     } else {
       this.players = [];
       this.turn = 0;
       this.deck = [];
       this.previewCard = null;
-      this.state = 'introduction';
+      this.mode = 'introduction';
     }
   }
 
@@ -38,14 +38,14 @@ export class GameManager {
       turn: init.turn ?? 0,
       deck: init.deck ?? [],
       previewCard: init.previewCard ?? null,
-      state: (init.state ?? 'introduction') as Mode,
+      mode: (init.state ?? 'introduction') as Mode,
     } as GameManager;
     return new GameManager(src);
   }
 
   // Immutable updaters: return new instances without mutating existing state
   withState(state: Mode): GameManager {
-    return new GameManager({ ...this, state });
+    return new GameManager({ ...this, mode: state });
   }
 
   withPreviewCard(preview: CardId | null): GameManager {
@@ -63,7 +63,7 @@ export class GameManager {
       turn: this.turn,
       deck: deepClone(this.deck),
       previewCard: this.previewCard,
-      state: this.state,
+      mode: this.mode,
     } as GameManager;
     return new GameManager(src);
   }
