@@ -59,6 +59,52 @@ export class GameState {
     return hands;
   }
 
+  // --- Mode transitions ---
+  withMode(mode: Mode): GameState {
+    const src = { ...this, mode } as GameState;
+    return new GameState(src);
+  }
+
+  withPreview(card: CardId | null): GameState {
+    const src = { ...this, previewCard: card, mode: card ? ('preview' as Mode) : this.mode } as GameState;
+    return new GameState(src);
+  }
+
+  start(): GameState {
+    return this.withMode('playing');
+  }
+
+  // Set preview when selecting a hand; validates playability
+  preview(cardId: CardId): GameState {
+    const playable = this.playableHands();
+    if (!playable.includes(cardId)) return this; // ignore invalid
+    const src = { ...this, previewCard: cardId, mode: 'preview' as Mode } as GameState;
+    return new GameState(src);
+  }
+
+  // Confirm preview: apply card effect and advance turn, clear preview
+  confirm(): GameState {
+    if (!this.previewCard) return this;
+    const applied = this.nextTurn(this.previewCard);
+    const next = new GameState({ ...applied, previewCard: null, mode: 'playing' } as GameState);
+    return next.checkGameOver();
+  }
+
+  // Cancel preview selection
+  cancelPreview(): GameState {
+    if (!this.previewCard) return this;
+    return new GameState({ ...this, previewCard: null, mode: 'playing' } as GameState);
+  }
+
+  // If 0 or 1 players remain with life>0, go to gameover
+  private checkGameOver(): GameState {
+    const alive = this.players.filter((p) => p.life > 0).length;
+    if (alive <= 1) {
+      return this.withMode('gameover');
+    }
+    return this;
+  }
+
   private withPlayedCard(playerIndex: number, cardId: CardId): GameState {
     let newState = this.clone();
     const turnPlayer = this.players[this.turn];
