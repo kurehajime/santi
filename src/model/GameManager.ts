@@ -1,4 +1,4 @@
-import type { CardId, GameState } from './types';
+import type { CardId, Mode } from './types';
 import type { Player } from './Player';
 import { deepClone } from './util';
 
@@ -7,7 +7,7 @@ export class GameManager {
   readonly turn: number;
   readonly deck: CardId[];
   readonly previewCard: CardId | null;
-  readonly state: GameState;
+  readonly state: Mode;
 
   constructor(gm?: GameManager) {
     if (gm) {
@@ -30,7 +30,7 @@ export class GameManager {
     turn?: number;
     deck?: CardId[];
     previewCard?: CardId | null;
-    state?: GameState;
+    state?: Mode;
   }): GameManager {
     if (!init) return new GameManager();
     const src = {
@@ -38,13 +38,13 @@ export class GameManager {
       turn: init.turn ?? 0,
       deck: init.deck ?? [],
       previewCard: init.previewCard ?? null,
-      state: (init.state ?? 'introduction') as GameState,
+      state: (init.state ?? 'introduction') as Mode,
     } as GameManager;
     return new GameManager(src);
   }
 
   // Immutable updaters: return new instances without mutating existing state
-  withState(state: GameState): GameManager {
+  withState(state: Mode): GameManager {
     return new GameManager({ ...this, state });
   }
 
@@ -78,5 +78,5 @@ export const createGameManager = (partial?: {
   turn?: number;
   deck?: CardId[];
   previewCard?: CardId | null;
-  state?: GameState;
+  state?: Mode;
 }): GameManager => GameManager.create(partial);
