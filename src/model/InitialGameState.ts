@@ -1,4 +1,4 @@
-import { GameManager } from './GameManager';
+import { GameState } from './GameState';
 import { createMana } from './Mana';
 import { createPlayer } from './Player';
 import { CARDS, SPECIAL_CARD_IDS } from './cards';
@@ -10,7 +10,7 @@ import { shuffle } from './util';
 // - Each hand: 3 fixed cards (斧兵/剣士/槍兵) + 2 random special cards
 // - Shared deck contains remaining special cards
 // - Turn starts at 0, state = 'introduction'
-export const InitialGameManager = (): GameManager => {
+export const InitialGameState = (): GameState => {
   const playersCount = 4;
 
   // Build and shuffle the special deck
@@ -36,7 +36,7 @@ export const InitialGameManager = (): GameManager => {
     })
   );
 
-  return GameManager.create({
+  return GameState.create({
     players,
     turn: 0,
     deck: remainingDeck,

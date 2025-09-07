@@ -1,12 +1,12 @@
 import React from 'react';
-import type { GameManager } from '../model/GameManager';
+import type { GameState } from '../model/GameState';
 import { CardElement } from './CardElement';
 import { StatusElement } from './StatusElement';
 
 type Seat = 'bottom';
 
 type Props = {
-  gm: GameManager;
+  gameState: GameState;
   seat: Seat;
   playerIndex: number; // human player index (usually 0)
   width: number;
@@ -14,8 +14,8 @@ type Props = {
   cardWidth?: number; // unified card width
 };
 
-export const PlayerFieldElement: React.FC<Props> = ({ gm, seat, playerIndex, width, height, cardWidth }) => {
-  const player = gm.players[playerIndex];
+export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex, width, height, cardWidth }) => {
+  const player = gameState.players[playerIndex];
   if (!player) return null;
 
   const localMin = Math.min(width, height);

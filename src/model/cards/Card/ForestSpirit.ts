@@ -1,7 +1,7 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
-import { GameManager } from '../../GameManager';
+import { GameState } from '../../GameState';
 
 export class ForestSpirit extends Card {
   constructor() {
@@ -14,8 +14,8 @@ export class ForestSpirit extends Card {
       isFixed: false,
     });
   }
-  extendGainMana(_gameManager: GameManager): { green: number, red: number, blue: number } {
-    const currentLife = _gameManager.players[_gameManager.turn].life;
+  extendGainMana(_gs: GameState): { green: number, red: number, blue: number } {
+    const currentLife = _gs.players[_gs.turn].life;
     const gain = 12 - currentLife;
     return { green: gain, red: 0, blue: 0 } as Mana;
   }

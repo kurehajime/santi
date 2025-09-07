@@ -1,15 +1,15 @@
 import React from 'react';
-import type { GameManager } from '../model/GameManager';
+import type { GameState } from '../model/GameState';
 import { PlayerFieldElement } from './PlayerFieldElement';
 import { CpuFieldElement } from './CpuFieldElement';
 
 type Props = {
-  gm: GameManager;
+  gameState: GameState;
   width: number;
   height: number;
 };
 
-export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
+export const FieldElement: React.FC<Props> = ({ gameState, width, height }) => {
   // Layout constants
   const PADDING = 16;
   const SEAT_FOOTPRINT_RATIO = 0.9; // general seat box width ratio
@@ -65,22 +65,22 @@ export const FieldElement: React.FC<Props> = ({ gm, width, height }) => {
       {/* User fields placed and rotated */}
       {/* Top (CPU 1) */}
       <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop, cpuSeatW, seatH)}>
-        <CpuFieldElement gm={gm} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />
+        <CpuFieldElement gameState={gameState} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />
       </g>
 
       {/* Left (CPU 2) */}
       <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
-        <CpuFieldElement gm={gm} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
+        <CpuFieldElement gameState={gameState} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
       </g>
 
       {/* Right (CPU 3) */}
       <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
-        <CpuFieldElement gm={gm} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
+        <CpuFieldElement gameState={gameState} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
       </g>
 
       {/* Bottom (YOU) */}
       <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8, seatW, seatH)}>
-        <PlayerFieldElement gm={gm} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />
+        <PlayerFieldElement gameState={gameState} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />
       </g>
 
       {/* Open cards are rendered inside each seat component */}

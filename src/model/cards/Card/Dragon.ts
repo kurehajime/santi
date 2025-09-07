@@ -1,7 +1,7 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
-import { GameManager } from '../../GameManager';
+import { GameState } from '../../GameState';
 import { getColor } from './cardUtil';
 
 export class Dragon extends Card {
@@ -15,12 +15,12 @@ export class Dragon extends Card {
       isFixed: false,
     });
   }
-  damage(_gm: GameManager): [number, number, number, number] {
+  damage(_gs: GameState): [number, number, number, number] {
     const damages: [number, number, number, number] = [0, 0, 0, 0];
-    const mana = _gm.players[_gm.turn].mana;
+    const mana = _gs.players[_gs.turn].mana;
     const damage = 2 * (mana.red);
     for (let i = 0; i < 4; i++) {
-      if (getColor(_gm.players[i].openCard) === "green") {
+      if (getColor(_gs.players[i].openCard) === "green") {
         damages[i] = damage;
       }
     }

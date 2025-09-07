@@ -1,7 +1,7 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
-import { GameManager } from '../../GameManager';
+import { GameState } from '../../GameState';
 import { damageByColor } from './cardUtil';
 
 export class Spearman extends Card {
@@ -15,8 +15,8 @@ export class Spearman extends Card {
       isFixed: true,
     });
   }
-  damage(_gm: GameManager): [number, number, number, number] {
-    return damageByColor(_gm, 'blue', 'red');
+  damage(_gs: GameState): [number, number, number, number] {
+    return damageByColor(_gs, 'blue', 'red');
   }
 }
 

@@ -1,7 +1,7 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
-import { GameManager } from '../../GameManager';
+import { GameState } from '../../GameState';
 import { damagePowByColor } from './cardUtil';
 
 export class PeasantUprising extends Card {
@@ -15,8 +15,8 @@ export class PeasantUprising extends Card {
       isFixed: false,
     });
   }
-  damage(_gm: GameManager): [number, number, number, number] {
-    return damagePowByColor(_gm, "blue");
+  damage(_gs: GameState): [number, number, number, number] {
+    return damagePowByColor(_gs, "blue");
   }
 }
 

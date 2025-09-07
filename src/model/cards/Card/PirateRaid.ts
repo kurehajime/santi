@@ -1,7 +1,7 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
-import { GameManager } from '../../GameManager';
+import { GameState } from '../../GameState';
 import { damagePowByColor } from './cardUtil';
 
 export class PirateRaid extends Card {
@@ -15,8 +15,8 @@ export class PirateRaid extends Card {
       isFixed: false,
     });
   }
-  damage(_gm: GameManager): [number, number, number, number] {
-    return damagePowByColor(_gm, "red");
+  damage(_gs: GameState): [number, number, number, number] {
+    return damagePowByColor(_gs, "red");
   }
 }
 
