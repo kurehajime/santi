@@ -24,8 +24,9 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
   const gap = localMin * 0.04;
   const STATUS_SCALE = 1.2;
   const STATUS_WIDTH_RATIO = 0.7; // adjust only width via this ratio
+  const OPEN_CARD_LIFT_RATIO = 0.8; // how high open card floats (in cardH)
   const statusW = (width - gap * 2) * STATUS_WIDTH_RATIO / STATUS_SCALE; // width adjustable, scale-neutral
-  const statusH = localMin * 0.22;
+  const statusH = localMin * 0.15;
 
   const handIds = player.hands;
   const showBack = true; // CPU hand is face-down
@@ -33,14 +34,15 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
 
   // Unified layout with Player: status on top-left, hand below, horizontal spread
   const handX = gap;
-  // Hand Y is independent of STATUS_SCALE (use unscaled statusH)
-  const handY = statusH + gap * 2;
+  // Hand Y aligned just below the rendered status height
+  const statusRenderedH = Math.round(statusH * STATUS_SCALE);
+  const handY = statusRenderedH + gap * 2;
   const availableW = width - gap * 2;
   const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
   // Open card placement: fixed to seat center (do not link to hand layout)
   const ocX = Math.round((width - cardW) / 2);
-  const ocY = cardH * -0.8;
+  const ocY = -Math.round(cardH * OPEN_CARD_LIFT_RATIO);
 
   return (
     <g>
@@ -51,7 +53,7 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
         </g>
       )}
       {/* Status (scaled) */}
-      <g transform={`translate(${gap}, ${gap}) scale(${STATUS_SCALE})`}>
+      <g transform={`translate(${gap}, ${Math.round(gap * 2)}) scale(${STATUS_SCALE})`}>
         <StatusElement player={player} width={statusW} height={statusH} isActive={gameState.turn === playerIndex} />
       </g>
 
