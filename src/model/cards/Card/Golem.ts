@@ -1,6 +1,7 @@
 import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
+import { GameManager } from '../../GameManager';
 
 export class Golem extends Card {
   constructor() {
@@ -12,6 +13,12 @@ export class Golem extends Card {
       text: '偶数のダメージを受けない',
       isFixed: false,
     });
+  }
+  hookDamageCancel(_gm: GameManager, _damage: number): boolean {
+    if (_damage % 2 === 0) {
+      return true;
+    }
+    return false;
   }
 }
 
