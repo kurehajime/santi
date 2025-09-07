@@ -16,6 +16,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const name = id ? CARDS_MAP[id]?.name ?? String(id) : labelFallback;
   const color = id ? CARDS_MAP[id]?.color ?? 'green' : 'green';
   const gain = id ? CARDS_MAP[id]?.gainMana ?? { green: 0, red: 0, blue: 0 } : { green: 0, red: 0, blue: 0 };
+  const isFixed = id ? !!CARDS_MAP[id]?.isFixed : false;
 
   // layout metrics
   const padX = Math.max(8, Math.round(width * 0.06)); // horizontal padding
@@ -61,7 +62,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const { setHover, enabled } = useCardHover();
 
   return (
-    <g
+    <g className="card"
       onMouseEnter={() => {
         if (!enabled) return;
         if (faceUp && id) setHover({ id, width: width * 2 });
@@ -83,6 +84,20 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
               {name}
             </text>
           </g>
+
+          {/* fixed card mark (∞) */}
+          {isFixed && (
+            <text
+              x={width - padX}
+              y={padY + headerH * 0.7}
+              textAnchor="end"
+              fontSize={Math.max(14, Math.round(headerH * 0.9))}
+              fill={headerTextColor}
+              opacity={0.35}
+            >
+              {'\u221E'}
+            </text>
+          )}
 
           {/* art box */}
           <g transform={`translate(${padX}, ${padY + headerH})`}>
