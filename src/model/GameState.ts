@@ -86,7 +86,12 @@ export class GameState {
   }
 
   start(): GameState {
-    return this.withMode('playing');
+    // Pick a random starting player among alive players
+    const aliveIdx: number[] = this.players.map((p, i) => (p.life > 0 ? i : -1)).filter((i) => i >= 0);
+    const n = aliveIdx.length > 0 ? aliveIdx.length : this.players.length;
+    const pick = aliveIdx.length > 0 ? aliveIdx[Math.floor(Math.random() * aliveIdx.length)] : Math.floor(Math.random() * n);
+    const src = { ...this, mode: 'playing' as Mode, turn: pick } as GameState;
+    return new GameState(src);
   }
 
   // Set preview when selecting a hand; validates playability
