@@ -9,6 +9,8 @@ export class GameState {
   readonly deck: CardId[];
   readonly previewCard: CardId | null;
   readonly mode: Mode;
+  readonly lastAttacker: number | null;
+  readonly lastDamage: number[] | null;
 
   constructor(gameState?: GameState) {
     if (gameState) {
@@ -17,12 +19,16 @@ export class GameState {
       this.deck = deepClone(gameState.deck);
       this.previewCard = gameState.previewCard;
       this.mode = gameState.mode;
+      this.lastAttacker = (gameState as any).lastAttacker ?? null;
+      this.lastDamage = (gameState as any).lastDamage ?? null;
     } else {
       this.players = [];
       this.turn = 0;
       this.deck = [];
       this.previewCard = null;
       this.mode = 'introduction';
+      this.lastAttacker = null;
+      this.lastDamage = null;
     }
   }
 
@@ -32,6 +38,8 @@ export class GameState {
     deck?: CardId[];
     previewCard?: CardId | null;
     state?: Mode;
+    lastAttacker?: number | null;
+    lastDamage?: number[] | null;
   }): GameState {
     if (!init) return new GameState();
     const src = {
@@ -40,6 +48,8 @@ export class GameState {
       deck: init.deck ?? [],
       previewCard: init.previewCard ?? null,
       mode: (init.state ?? 'introduction') as Mode,
+      lastAttacker: init.lastAttacker ?? null,
+      lastDamage: init.lastDamage ?? null,
     } as GameState;
     return new GameState(src);
   }
@@ -78,7 +88,7 @@ export class GameState {
   preview(cardId: CardId): GameState {
     const playable = this.playableHands();
     if (!playable.includes(cardId)) return this; // ignore invalid
-    const src = { ...this, previewCard: cardId, mode: 'preview' as Mode } as GameState;
+    const src = { ...this, previewCard: cardId, mode: 'preview' as Mode, lastAttacker: null, lastDamage: null } as GameState;
     return new GameState(src);
   }
 
@@ -203,6 +213,9 @@ export class GameState {
       newState = new GameState({ ...newState, deck: newDeck } as GameState);
     }
     // ターンを進める（Life>0のプレイヤーまでスキップ）
+    // 記録: 最終ダメージとアタッカー
+    newState = new GameState({ ...newState, lastAttacker: this.turn, lastDamage: damage.slice() } as GameState);
+
     const nextAlive = (() => {
       const n = Math.max(1, newState.players.length);
       let idx = newState.turn;

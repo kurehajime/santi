@@ -42,5 +42,7 @@ export const InitialGameState = (): GameState => {
     deck: remainingDeck,
     previewCard: null,
     state: 'introduction',
+    lastAttacker: null,
+    lastDamage: null,
   });
 };

@@ -94,6 +94,64 @@ export const FieldElement: React.FC<Props> = ({ gameState, width, height, onSele
       </g>
 
       {/* Open cards are rendered inside each seat component */}
+
+      {/* Damage overlay arrows: from last attacker to damaged targets */}
+      {(() => {
+        const dmg = gameState.lastDamage;
+        const from = gameState.lastAttacker;
+        if (!dmg || from == null) return null;
+
+        // Seat centers in this field coordinate (padding has been applied)
+        const centerOf = (_seat: 'bottom' | 'top' | 'left' | 'right', x: number, y: number, boxW: number, boxH: number) => {
+          return { x: x + boxW / 2, y: y + boxH / 2 };
+        };
+        const anchors = [
+          centerOf('bottom', (w - seatW) / 2, h - seatH - 8, seatW, seatH), // 0 bottom
+          centerOf('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW), // 1 left
+          centerOf('top', (w - cpuSeatW) / 2, 8 - cpuHideTop, cpuSeatW, seatH), // 2 top
+          centerOf('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW), // 3 right
+        ];
+
+        const arrows = [] as React.ReactElement[];
+        for (let i = 0; i < dmg.length; i++) {
+          const amount = dmg[i] ?? 0;
+          if (i === from || amount <= 0) continue;
+          const a = anchors[from];
+          const b = anchors[i];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const len = Math.max(1, Math.hypot(dx, dy));
+          const ux = dx / len;
+          const uy = dy / len;
+          const head = 10; // arrow head size
+          const shrink = 16; // padding from centers
+          const x1 = a.x + ux * shrink;
+          const y1 = a.y + uy * shrink;
+          const x2 = b.x - ux * shrink;
+          const y2 = b.y - uy * shrink;
+          const hx = x2 - ux * head;
+          const hy = y2 - uy * head;
+          const perpX = -uy;
+          const perpY = ux;
+          const h1x = hx + perpX * (head * 0.6);
+          const h1y = hy + perpY * (head * 0.6);
+          const h2x = hx - perpX * (head * 0.6);
+          const h2y = hy - perpY * (head * 0.6);
+          const mx = (x1 + x2) / 2;
+          const my = (y1 + y2) / 2;
+          arrows.push(
+            <g key={`arrow-${from}-${i}`} style={{ pointerEvents: 'none' }}>
+              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#111827" strokeWidth={2} opacity={0.8} />
+              <polygon points={`${x2},${y2} ${h1x},${h1y} ${h2x},${h2y}`} fill="#111827" opacity={0.8} />
+              <g transform={`translate(${mx}, ${my})`}>
+                <rect x={-10} y={-10} width={20} height={20} rx={4} fill="#111827" opacity={0.9} />
+                <text x={0} y={2} textAnchor="middle" fontSize={12} fill="#ffffff">{amount}</text>
+              </g>
+            </g>
+          );
+        }
+        return <g aria-label="damage-overlay">{arrows}</g>;
+      })()}
     </g>
   );
 };
