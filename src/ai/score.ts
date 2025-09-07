@@ -75,18 +75,17 @@ export const scoreCard = (gs: GameState, cardId: CardId): number => {
 
   // 与ダメージ合計
   score += dmg.reduce((acc, v, i) => (i === turn ? acc : acc + Math.max(0, v)), 0);
-
+  const card = CARDS_MAP[cardId];
   // 被ダメージ（相手マナが自HPより大きい色ごとに-20）
   for (let i = 0; i < gs.players.length; i++) {
     if (i === turn) continue;
     const p = gs.players[i];
-    if (p.mana.green > me.life) score -= 20;
-    if (p.mana.red > me.life) score -= 20;
-    if (p.mana.blue > me.life) score -= 20;
+    if (card.color === "blue" && p.mana.green > me.life) score -= 30;
+    if (card.color === "green" && p.mana.red > me.life) score -= 30;
+    if (card.color === "red" && p.mana.blue > me.life) score -= 30;
   }
 
   // カード評価値
-  const card = CARDS_MAP[cardId];
   const hand = me.hands.map((id) => CARDS_MAP[id]);
   const countNonFixed = (color: 'green' | 'red' | 'blue') => hand.filter((c) => !isFixedCard(c) && c.color === color).length;
   const countPlayersByColor = (color: 'green' | 'red' | 'blue') =>
