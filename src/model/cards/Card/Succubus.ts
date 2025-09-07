@@ -2,7 +2,7 @@ import { CARD_ID } from '../ids';
 import type { Mana } from '../../Mana';
 import { Card } from './Card';
 import { GameState } from '../../GameState';
-import { damageByColor } from './cardUtil';
+import { damageByColor, getColor } from './cardUtil';
 import { CardId } from '../../types';
 import { CARDS } from '../../cards';
 
@@ -21,6 +21,9 @@ export class Succubus extends Card {
     return damageByColor(_gs, 'blue', 'red');
   }
   hookEnabledPlay(_gs: GameState, hands: CardId[]): CardId[] {
+    const color = getColor(_gs.players[_gs.turn].openCard);
+    if (color !== 'red') return hands;
+    // 赤以外を除外
     hands = hands.filter((id) => {
       const card = CARDS.find((c) => c.id === id);
       if (!card) return false;

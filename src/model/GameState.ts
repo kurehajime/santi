@@ -45,12 +45,16 @@ export class GameState {
   }
 
   playableHands(): CardId[] {
-    // プレイできるカードなのかチェック
+    // プレイ可能判定: すべての場札のフックで絞り込み
     const turnPlayer = this.players[this.turn];
-    const openCards = this.players.map((p) => p.openCard).flat().map(c => CARDS.filter(card => card.id === c)[0]);
-    let hands = turnPlayer.hands
-    for (let openCard of openCards) {
-      hands = openCard.hookEnabledPlay(this, hands);
+    const openCards = this.players
+      .map((p) => p.openCard)
+      .filter((id): id is CardId => !!id)
+      .map((id) => CARDS.find((card) => card.id === id))
+      .filter((c): c is NonNullable<typeof c> => !!c);
+    let hands = [...turnPlayer.hands];
+    for (const oc of openCards) {
+      hands = oc.hookEnabledPlay(this, hands);
     }
     return hands;
   }

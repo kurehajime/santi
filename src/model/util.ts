@@ -1,8 +1,5 @@
 // Generic deep clone for plain objects and arrays.
 
-import { CARDS } from "./cards";
-import { CardId } from "./types";
-
 // Note: Not intended for functions, Dates, Maps, Sets, etc.
 export const deepClone = <T>(obj: T): T => {
   if (obj === null || typeof obj !== 'object') return obj;
@@ -25,4 +22,3 @@ export const shuffle = <T>(arr: readonly T[], rng: () => number = Math.random): 
   }
   return a;
 };
-

@@ -46,5 +46,5 @@ export abstract class Card {
   hookDamageCancel(_gs: GameState, _damage: number): boolean {
     return false;
   }
-}
 
+}
