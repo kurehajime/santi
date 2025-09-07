@@ -11,7 +11,7 @@ export class ArmyCharge extends Card {
       name: '軍勢の突撃',
       color: 'red',
       gainMana: { green: 0, red: 1, blue: 0 } as Mana,
-      text: '緑プレイヤーに2の[赤プレイヤーの数]乗ダメージ',
+      text: '緑プレイヤーに2の[緑プレイヤーの数]乗ダメージ',
       isFixed: false,
     });
   }
