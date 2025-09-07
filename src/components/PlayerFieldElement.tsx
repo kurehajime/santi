@@ -24,9 +24,10 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
   const cardW = cardWidth ?? localMin * 0.22;
   const cardH = Math.round(cardW * Math.SQRT2);
   const gap = localMin * 0.04;
-  const statusW = localMin * 0.36;
-  const statusH = localMin * 0.22;
   const STATUS_SCALE = 1.2;
+  const STATUS_WIDTH_RATIO = 0.5; // adjust only width via this ratio
+  const statusW = (width - gap * 2) * STATUS_WIDTH_RATIO / STATUS_SCALE; // width adjustable, scale-neutral
+  const statusH = localMin * 0.22;
 
   const handIds = player.hands;
   const showBack = false; // player hand is face-up
@@ -39,13 +40,13 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
 
   // Hand placement below status
   const handX = gap;
-  const handY = statusH * STATUS_SCALE + gap * 2;
+  // Hand Y is independent of STATUS_SCALE (use unscaled statusH)
+  const handY = statusH + gap * 2;
   const availableW = width - gap * 2;
   const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
 
-  // Open card placement: centered above the hand row (unified rule)
-  const handSpanCenterLeft = handX + (n > 0 ? ((n - 1) * stepX) / 2 : (availableW - cardW) / 2);
-  const ocX = Math.round(handSpanCenterLeft);
+  // Open card placement: fixed to seat center (do not link to hand layout)
+  const ocX = Math.round((width - cardW) / 2);
   const ocY = cardH * -0.8;
 
   return (
