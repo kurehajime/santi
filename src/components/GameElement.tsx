@@ -27,8 +27,9 @@ export const GameElement: React.FC = () => {
     return () => clearTimeout(t);
   }, [gameState.mode, gameState.turn]);
 
+  const hoverEnabled = gameState.turn === 0; // disable enlarging on opponent's turn
   return (
-    <CardHoverContext.Provider value={{ hover, setHover }}>
+    <CardHoverContext.Provider value={{ hover, setHover, enabled: hoverEnabled }}>
       <div style={{ position: 'relative' }}>
         <svg
           width={width}
@@ -40,6 +41,7 @@ export const GameElement: React.FC = () => {
           onClick={() => {
             // click outside cards cancels preview (only for human's preview)
             if (gameState.mode === 'preview' && gameState.turn === 0) {
+              setHover(null);
               setGameState((s) => s.cancelPreview());
             }
           }}
@@ -49,8 +51,14 @@ export const GameElement: React.FC = () => {
             width={width}
             height={height}
             onSelectHand={(cid) => {
-              // If same card selected again in preview, confirm. Otherwise set preview.
-              setGameState((s) => (s.mode === 'preview' && s.previewCard === cid ? s.confirm() : s.preview(cid)));
+              // If same card selected again in preview, confirm (and clear hover). Otherwise set preview.
+              setGameState((s) => {
+                if (s.mode === 'preview' && s.previewCard === cid) {
+                  setHover(null);
+                  return s.confirm();
+                }
+                return s.preview(cid);
+              });
             }}
           />
         </svg>

@@ -45,11 +45,12 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const artR = Math.min(artW, artH) * 0.18;
   const artCX = padX + artW / 2;
   const artCY = artY + artH / 2 + artR * 0.1;
-  const { setHover } = useCardHover();
+  const { setHover, enabled } = useCardHover();
 
   return (
     <g
       onMouseEnter={() => {
+        if (!enabled) return;
         if (faceUp && id) setHover({ id, width: width * 2 });
       }}
       onMouseLeave={() => setHover(null)}

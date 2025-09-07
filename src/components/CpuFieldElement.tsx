@@ -52,8 +52,10 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
           <CardElement id={player.openCard} width={cardW} faceUp={true} labelFallback="カード" />
         </g>
       )}
-      {/* Status (scaled) */}
-      <g transform={`translate(${gap}, ${Math.round(gap * 2)}) scale(${STATUS_SCALE})`}>
+      {/* Status (scaled, centered horizontally) */}
+      <g
+        transform={`translate(${Math.round((width - statusW * STATUS_SCALE) / 2)}, ${Math.round(gap * 2)}) scale(${STATUS_SCALE})`}
+      >
         <StatusElement player={player} width={statusW} height={statusH} isActive={gameState.turn === playerIndex} />
       </g>
 
