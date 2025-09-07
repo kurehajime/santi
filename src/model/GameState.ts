@@ -255,6 +255,9 @@ export class GameState {
       deck: deepClone(this.deck),
       previewCard: this.previewCard,
       mode: this.mode,
+      lastAttacker: this.lastAttacker,
+      lastDamage: this.lastDamage ? [...this.lastDamage] : null,
+      eliminatedOrder: deepClone(this.eliminatedOrder),
     } as GameState;
     return new GameState(src);
   }
