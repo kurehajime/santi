@@ -181,9 +181,17 @@ export class GameState {
     for (let i = 0; i < newState.players.length; i++) {
       newState.players[i].life = Math.max(0, newState.players[i].life - damage[i]);
     }
-    // ターンを進める
-    const next = (newState.turn + 1) % Math.max(1, newState.players.length);
-    return new GameState({ ...newState, turn: next } as GameState);
+    // ターンを進める（Life>0のプレイヤーまでスキップ）
+    const nextAlive = (() => {
+      const n = Math.max(1, newState.players.length);
+      let idx = newState.turn;
+      for (let i = 0; i < n; i++) {
+        idx = (idx + 1) % n;
+        if (newState.players[idx]?.life > 0) return idx;
+      }
+      return newState.turn; // 全員死亡などの異常時は据え置き
+    })();
+    return new GameState({ ...newState, turn: nextAlive } as GameState);
   }
 
   clone(): GameState {

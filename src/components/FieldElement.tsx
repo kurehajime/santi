@@ -65,17 +65,17 @@ export const FieldElement: React.FC<Props> = ({ gameState, width, height, onSele
       {/* Open cards moved into each seat component */}
 
       {/* User fields placed and rotated */}
-      {/* Top (CPU 1) */}
+      {/* Top (CPU index 2) */}
       <g transform={seatTransform('top', (w - cpuSeatW) / 2, 8 - cpuHideTop, cpuSeatW, seatH)}>
-        <CpuFieldElement gameState={gameState} seat="top" playerIndex={1} width={cpuSeatW} height={seatH} cardWidth={cardW} />
+        <CpuFieldElement gameState={gameState} seat="top" playerIndex={2} width={cpuSeatW} height={seatH} cardWidth={cardW} />
       </g>
 
-      {/* Left (CPU 2) */}
+      {/* Left (CPU index 1) */}
       <g transform={seatTransform('left', 8 - cpuHideLeft, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
-        <CpuFieldElement gameState={gameState} seat="left" playerIndex={2} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
+        <CpuFieldElement gameState={gameState} seat="left" playerIndex={1} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
       </g>
 
-      {/* Right (CPU 3) */}
+      {/* Right (CPU index 3) */}
       <g transform={seatTransform('right', w - cpuSeatW - 8 + cpuHideRight, (h - sideSeatW) / 2 - CPU_SIDE_Y_SHIFT_PX, cpuSeatW, sideSeatW)}>
         <CpuFieldElement gameState={gameState} seat="right" playerIndex={3} width={cpuSeatW} height={sideSeatW} cardWidth={cardW} />
       </g>
