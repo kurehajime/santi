@@ -72,6 +72,19 @@ export const GameElement: React.FC = () => {
             </button>
           </div>
         )}
+        {gameState.mode === 'gameover' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+            <button
+              onClick={() => {
+                setHover(null);
+                setGameState(InitialGameState());
+              }}
+              style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
+            >
+              再戦
+            </button>
+          </div>
+        )}
         {hover && hover.id && (
           <div
             style={{
