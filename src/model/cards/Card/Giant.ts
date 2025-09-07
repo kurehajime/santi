@@ -13,5 +13,10 @@ export class Giant extends Card {
       isFixed: false,
     });
   }
+  extendGainMana(_gameManager: any): { green: number, red: number, blue: number } {
+    const currentMana = _gameManager.players[_gameManager.turn].mana.green;
+    const gain = currentMana * 2;
+    return { green: gain, red: 0, blue: 0 } as Mana;
+  }
 }
 
