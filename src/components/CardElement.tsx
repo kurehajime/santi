@@ -26,11 +26,24 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const rulesH = Math.max(0, height - (headerH + artH + actionH + padY * 4));
 
   // colors
-  const cardBg = faceUp ? '#dfeee0' : '#e5e7eb'; // light green tint for face-up
-  const cardStroke = '#9aa88c';
+  const paletteByColor = (c: 'green' | 'red' | 'blue') => {
+    switch (c) {
+      case 'red':
+        return { bg: '#7f1d1d', stroke: '#991b1b' }; // deep red
+      case 'blue':
+        return { bg: '#1e3a8a', stroke: '#1d4ed8' }; // deep blue
+      case 'green':
+      default:
+        return { bg: '#14532d', stroke: '#166534' }; // deep green
+    }
+  };
+  const theme = paletteByColor(color as any);
+  const cardBg = faceUp ? theme.bg : '#e5e7eb';
+  const cardStroke = faceUp ? theme.stroke : '#cbd5e1';
   const panelBg = '#ededed';
   const panelStroke = '#a3a3a3';
-  const textColor = '#111827';
+  const bodyTextColor = '#111827'; // text on panels
+  const headerTextColor = '#f8fafc'; // text on dark card background
 
   const pipHex = (c: 'green' | 'red' | 'blue') => (c === 'green' ? '#65a30d' : c === 'red' ? '#dc2626' : '#2563eb');
 
@@ -66,7 +79,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
             <circle cx={headerH * 0.4} cy={headerH * 0.5} r={headerH * 0.35} fill="#f1f5f9" stroke="#cbd5e1" />
             <circle cx={headerH * 0.4} cy={headerH * 0.5} r={headerH * 0.24} fill={pipHex(color as any)} />
             {/* name */}
-            <text x={headerH * 0.4 + padX * 0.8} y={headerH * 0.62} fontSize={Math.round(width * 0.09)} fill={textColor}>
+            <text x={headerH * 0.4 + padX * 0.8} y={headerH * 0.62} fontSize={Math.round(width * 0.09)} fill={headerTextColor}>
               {name}
             </text>
           </g>
@@ -87,7 +100,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
           <g transform={`translate(${padX}, ${padY + headerH + artH + padY})`}>
             <rect x={0} y={0} width={width - padX * 2} height={actionH} rx={6} fill={panelBg} stroke={panelStroke} />
             {/* plus sign */}
-            <text x={(width - padX * 2) / 2 - actionH * 0.25} y={actionH * 0.62} fontSize={Math.round(actionH * 0.6)} textAnchor="end" fill={textColor}>+
+            <text x={(width - padX * 2) / 2 - actionH * 0.25} y={actionH * 0.62} fontSize={Math.round(actionH * 0.6)} textAnchor="end" fill={bodyTextColor}>+
             </text>
             {/* pip */}
             {primaryGainColor && (
@@ -95,7 +108,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
             )}
             {/* amount (optional when >1) */}
             {gainAmount > 1 && (
-              <text x={(width - padX * 2) / 2 + actionH * 0.55} y={actionH * 0.64} fontSize={Math.round(actionH * 0.46)} fill={textColor}>
+              <text x={(width - padX * 2) / 2 + actionH * 0.55} y={actionH * 0.64} fontSize={Math.round(actionH * 0.46)} fill={bodyTextColor}>
                 ×{gainAmount}
               </text>
             )}
@@ -116,7 +129,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
                       style={{
                         width: '100%',
                         height: '100%',
-                        color: textColor,
+                        color: bodyTextColor,
                         fontSize: fontPx,
                         lineHeight: 1.25,
                         whiteSpace: 'normal',
