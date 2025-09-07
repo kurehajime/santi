@@ -7,11 +7,12 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
   const r = Math.round(Math.min(width, height) * 0.08);
   const pad = Math.max(6, Math.round(height * 0.08));
   // Horizontal row metrics
-  const pipR = Math.max(6, Math.round(height * 0.16));
-  const fsMana = Math.max(12, Math.round(height * 0.34)); // larger font for mana
-  const fsHp = Math.max(12, Math.round(height * 0.34));
+  const pipR = Math.max(6, Math.round(height * 0.25));
+  const fsMana = Math.max(14, Math.round(height * 0.6)); // bigger font for mana
+  const fsHp = Math.max(14, Math.round(height * 0.6));
   const colW = Math.max(1, (width - pad * 2) / 4);
   const colCenter = (i: number) => pad + colW * (i + 0.5);
+  const manaShiftX = Math.max(6, Math.round(width * 0.04)); // shift mana a bit to the right
 
   const bgFill = isActive ? '#fffbeb' : '#fafafa';
   const bgStroke = isActive ? '#f59e0b' : '#d1d5db';
@@ -41,20 +42,20 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
 
       {/* Column 1: Green mana */}
       <g>
-        <circle cx={colCenter(1) - (pipR + 6)} cy={height / 2} r={pipR} fill="#16a34a" />
-        <text x={colCenter(1) - pipR + 6} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.green}</text>
+        <circle cx={colCenter(1) - (pipR + 6) + manaShiftX} cy={height / 2} r={pipR} fill="#16a34a" />
+        <text x={colCenter(1) - pipR + 6 + manaShiftX} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.green}</text>
       </g>
 
       {/* Column 2: Red mana */}
       <g>
-        <circle cx={colCenter(2) - (pipR + 6)} cy={height / 2} r={pipR} fill="#ef4444" />
-        <text x={colCenter(2) - pipR + 6} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.red}</text>
+        <circle cx={colCenter(2) - (pipR + 6) + manaShiftX} cy={height / 2} r={pipR} fill="#ef4444" />
+        <text x={colCenter(2) - pipR + 6 + manaShiftX} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.red}</text>
       </g>
 
       {/* Column 3: Blue mana */}
       <g>
-        <circle cx={colCenter(3) - (pipR + 6)} cy={height / 2} r={pipR} fill="#3b82f6" />
-        <text x={colCenter(3) - pipR + 6} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.blue}</text>
+        <circle cx={colCenter(3) - (pipR + 6) + manaShiftX} cy={height / 2} r={pipR} fill="#3b82f6" />
+        <text x={colCenter(3) - pipR + 6 + manaShiftX} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.blue}</text>
       </g>
     </g>
   );
