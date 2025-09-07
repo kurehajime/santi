@@ -4,6 +4,7 @@ import { FieldElement } from './FieldElement';
 import { CardHoverContext } from './CardHoverContext';
 import { CardElement } from './CardElement';
 import { InitialGameState } from '../model/InitialGameState';
+import { pickBestPlayable } from '../ai/score';
 
 // フェーズ1: SVGでHello, worldを描画する最小実装
 export const GameElement: React.FC = () => {
@@ -16,9 +17,8 @@ export const GameElement: React.FC = () => {
   React.useEffect(() => {
     if (gameState.mode !== 'playing') return;
     if (gameState.turn === 0) return;
-    const playable = gameState.playableHands();
-    if (playable.length === 0) return; // nothing to do
-    const pick = playable[Math.floor(Math.random() * playable.length)];
+    const pick = pickBestPlayable(gameState) ?? null;
+    if (!pick) return;
     // small delay for UX
     const t = setTimeout(() => {
       setGameState((s) => s.preview(pick));
