@@ -44,5 +44,6 @@ export const InitialGameState = (): GameState => {
     state: 'introduction',
     lastAttacker: null,
     lastDamage: null,
+    eliminatedOrder: [],
   });
 };

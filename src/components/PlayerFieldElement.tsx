@@ -63,7 +63,22 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
       <g
         transform={`translate(${Math.round((width - statusW * STATUS_SCALE) / 2)}, ${Math.round(gap * 2)}) scale(${STATUS_SCALE})`}
       >
-        <StatusElement player={player} width={statusW} height={statusH} isActive={gameState.turn === playerIndex} />
+        {(() => {
+          // Rank defeated players by elimination order: first out = last place
+          const n = gameState.players.length;
+          const elim = gameState.eliminatedOrder ?? [];
+          const idxInElim = elim.indexOf(playerIndex);
+          const myRank = idxInElim >= 0 ? n - idxInElim : undefined;
+          return (
+            <StatusElement
+              player={player}
+              width={statusW}
+              height={statusH}
+              isActive={gameState.turn === playerIndex}
+              rank={myRank}
+            />
+          );
+        })()}
       </g>
 
       {/* Hand */}

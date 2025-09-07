@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Player } from '../model/Player';
 
-type Props = { player: Player; width: number; height: number; isActive?: boolean };
+type Props = { player: Player; width: number; height: number; isActive?: boolean; rank?: number };
 
-export const StatusElement: React.FC<Props> = ({ player, width, height, isActive = false }) => {
+export const StatusElement: React.FC<Props> = ({ player, width, height, isActive = false, rank }) => {
   const r = Math.round(Math.min(width, height) * 0.08);
   const pad = Math.max(6, Math.round(height * 0.08));
   // Horizontal row metrics
@@ -15,6 +15,22 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
 
   const bgFill = isActive ? '#fffbeb' : '#fafafa';
   const bgStroke = isActive ? '#f59e0b' : '#d1d5db';
+  // If defeated, show placement only
+  if (player.life <= 0 && rank) {
+    const r = Math.round(Math.min(width, height) * 0.08);
+    const bgFill = '#f3f4f6';
+    const bgStroke = '#d1d5db';
+    const fs = Math.max(16, Math.round(height * 0.5));
+    return (
+      <g>
+        <rect x={0} y={0} width={width} height={height} rx={r} fill={bgFill} stroke={bgStroke} />
+        <text x={width / 2} y={height / 2} textAnchor="middle" dominantBaseline="middle" fontSize={fs} fill="#111827">
+          {rank}位
+        </text>
+      </g>
+    );
+  }
+
   return (
     <g>
       <rect x={0} y={0} width={width} height={height} rx={r} fill={bgFill} stroke={bgStroke} />

@@ -11,6 +11,7 @@ export class GameState {
   readonly mode: Mode;
   readonly lastAttacker: number | null;
   readonly lastDamage: number[] | null;
+  readonly eliminatedOrder: number[]; // indices of players in the order they were eliminated
 
   constructor(gameState?: GameState) {
     if (gameState) {
@@ -21,6 +22,7 @@ export class GameState {
       this.mode = gameState.mode;
       this.lastAttacker = (gameState as any).lastAttacker ?? null;
       this.lastDamage = (gameState as any).lastDamage ?? null;
+      this.eliminatedOrder = deepClone((gameState as any).eliminatedOrder ?? []);
     } else {
       this.players = [];
       this.turn = 0;
@@ -29,6 +31,7 @@ export class GameState {
       this.mode = 'introduction';
       this.lastAttacker = null;
       this.lastDamage = null;
+      this.eliminatedOrder = [];
     }
   }
 
@@ -40,6 +43,7 @@ export class GameState {
     state?: Mode;
     lastAttacker?: number | null;
     lastDamage?: number[] | null;
+    eliminatedOrder?: number[];
   }): GameState {
     if (!init) return new GameState();
     const src = {
@@ -50,6 +54,7 @@ export class GameState {
       mode: (init.state ?? 'introduction') as Mode,
       lastAttacker: init.lastAttacker ?? null,
       lastDamage: init.lastDamage ?? null,
+      eliminatedOrder: init.eliminatedOrder ?? [],
     } as GameState;
     return new GameState(src);
   }
@@ -197,6 +202,21 @@ export class GameState {
       if (newState.players[i].life === 0) {
         newState.players[i].openCard = null;
       }
+    }
+    // 脱落順を更新（今ターンで0になったプレイヤーを順に追加）
+    const eliminatedNow: number[] = [];
+    for (let i = 0; i < newState.players.length; i++) {
+      const wasAlive = prevLives[i] > 0;
+      const nowDead = newState.players[i].life === 0;
+      if (wasAlive && nowDead && !newState.eliminatedOrder.includes(i)) {
+        eliminatedNow.push(i);
+      }
+    }
+    if (eliminatedNow.length > 0) {
+      newState = new GameState({
+        ...newState,
+        eliminatedOrder: [...newState.eliminatedOrder, ...eliminatedNow],
+      } as GameState);
     }
     // 撃破ボーナス: このターンのプレイヤーは、倒した敵1人につき2枚ドロー
     const defeatedCount = newState.players.reduce((acc, p, i) => {
