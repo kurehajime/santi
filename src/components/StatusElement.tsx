@@ -7,7 +7,6 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
   const r = Math.round(Math.min(width, height) * 0.08);
   const pad = Math.max(6, Math.round(height * 0.08));
   // Horizontal row metrics
-  const pipR = Math.max(6, Math.round(height * 0.25));
   const fsMana = Math.max(14, Math.round(height * 0.6)); // bigger font for mana
   const fsHp = Math.max(14, Math.round(height * 0.6));
   const colW = Math.max(1, (width - pad * 2) / 4);
@@ -40,23 +39,50 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
         {'\u2665'}{player.life}
       </text>
 
-      {/* Column 1: Green mana */}
-      <g>
-        <circle cx={colCenter(1) - (pipR + 6) + manaShiftX} cy={height / 2} r={pipR} fill="#16a34a" />
-        <text x={colCenter(1) - pipR + 6 + manaShiftX} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.green}</text>
-      </g>
+      {/* Column 1: Green mana (rounded rectangle badge) */}
+      {(() => {
+        const chipH = Math.max(18, Math.round(height * 0.7));
+        const chipW = Math.max(28, Math.round(fsMana * 1.7));
+        const rx = Math.round(chipH * 0.25);
+        const cx = colCenter(1) + manaShiftX;
+        const cy = height / 2;
+        return (
+          <g>
+            <rect x={cx - chipW / 2} y={cy - chipH / 2} width={chipW} height={chipH} rx={rx} fill="#16a34a" />
+            <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" fontSize={fsMana} fill="#ffffff">{player.mana.green}</text>
+          </g>
+        );
+      })()}
 
       {/* Column 2: Red mana */}
-      <g>
-        <circle cx={colCenter(2) - (pipR + 6) + manaShiftX} cy={height / 2} r={pipR} fill="#ef4444" />
-        <text x={colCenter(2) - pipR + 6 + manaShiftX} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.red}</text>
-      </g>
+      {(() => {
+        const chipH = Math.max(18, Math.round(height * 0.7));
+        const chipW = Math.max(28, Math.round(fsMana * 1.7));
+        const rx = Math.round(chipH * 0.25);
+        const cx = colCenter(2) + manaShiftX;
+        const cy = height / 2;
+        return (
+          <g>
+            <rect x={cx - chipW / 2} y={cy - chipH / 2} width={chipW} height={chipH} rx={rx} fill="#ef4444" />
+            <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" fontSize={fsMana} fill="#ffffff">{player.mana.red}</text>
+          </g>
+        );
+      })()}
 
       {/* Column 3: Blue mana */}
-      <g>
-        <circle cx={colCenter(3) - (pipR + 6) + manaShiftX} cy={height / 2} r={pipR} fill="#3b82f6" />
-        <text x={colCenter(3) - pipR + 6 + manaShiftX} y={height / 2} dominantBaseline="middle" fontSize={fsMana} fill="#111827">{player.mana.blue}</text>
-      </g>
+      {(() => {
+        const chipH = Math.max(18, Math.round(height * 0.7));
+        const chipW = Math.max(28, Math.round(fsMana * 1.7));
+        const rx = Math.round(chipH * 0.25);
+        const cx = colCenter(3) + manaShiftX;
+        const cy = height / 2;
+        return (
+          <g>
+            <rect x={cx - chipW / 2} y={cy - chipH / 2} width={chipW} height={chipH} rx={rx} fill="#3b82f6" />
+            <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" fontSize={fsMana} fill="#ffffff">{player.mana.blue}</text>
+          </g>
+        );
+      })()}
     </g>
   );
 };
