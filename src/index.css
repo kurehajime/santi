@@ -12,3 +12,13 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial;
 }
 
+/* Damage overlay fade-out */
+@keyframes damageFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.damage-overlay {
+  animation: damageFadeOut 1s ease-out forwards;
+  will-change: opacity;
+}

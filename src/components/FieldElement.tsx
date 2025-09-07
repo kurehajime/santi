@@ -150,7 +150,7 @@ export const FieldElement: React.FC<Props> = ({ gameState, width, height, onSele
             </g>
           );
         }
-        return <g aria-label="damage-overlay">{arrows}</g>;
+        return <g aria-label="damage-overlay" className="damage-overlay">{arrows}</g>;
       })()}
     </g>
   );
