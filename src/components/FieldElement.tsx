@@ -123,7 +123,8 @@ export const FieldElement: React.FC<Props> = ({ gameState, width, height, onSele
           const len = Math.max(1, Math.hypot(dx, dy));
           const ux = dx / len;
           const uy = dy / len;
-          const head = 10; // arrow head size
+          const head = 24; // arrow head length (bigger for clearer direction)
+          const headW = head * 0.9; // arrow head half-width
           const shrink = 16; // padding from centers
           const x1 = a.x + ux * shrink;
           const y1 = a.y + uy * shrink;
@@ -133,19 +134,22 @@ export const FieldElement: React.FC<Props> = ({ gameState, width, height, onSele
           const hy = y2 - uy * head;
           const perpX = -uy;
           const perpY = ux;
-          const h1x = hx + perpX * (head * 0.6);
-          const h1y = hy + perpY * (head * 0.6);
-          const h2x = hx - perpX * (head * 0.6);
-          const h2y = hy - perpY * (head * 0.6);
+          const h1x = hx + perpX * headW;
+          const h1y = hy + perpY * headW;
+          const h2x = hx - perpX * headW;
+          const h2y = hy - perpY * headW;
           const mx = (x1 + x2) / 2;
           const my = (y1 + y2) / 2;
+          const labelFs = 36; // larger damage number
+          const boxW = labelFs * 1.6;
+          const boxH = labelFs * 1.2;
           arrows.push(
             <g key={`arrow-${from}-${i}`} style={{ pointerEvents: 'none' }}>
-              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#111827" strokeWidth={2} opacity={0.8} />
+              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#111827" strokeWidth={3} opacity={0.85} />
               <polygon points={`${x2},${y2} ${h1x},${h1y} ${h2x},${h2y}`} fill="#111827" opacity={0.8} />
               <g transform={`translate(${mx}, ${my})`}>
-                <rect x={-10} y={-10} width={20} height={20} rx={4} fill="#111827" opacity={0.9} />
-                <text x={0} y={2} textAnchor="middle" fontSize={12} fill="#ffffff">{amount}</text>
+                <rect x={-boxW / 2} y={-boxH / 2} width={boxW} height={boxH} rx={6} fill="#111827" opacity={0.9} />
+                <text x={0} y={0} textAnchor="middle" dominantBaseline="middle" fontSize={labelFs} fill="#ffffff">{amount}</text>
               </g>
             </g>
           );
