@@ -14,11 +14,16 @@ body {
 
 /* Damage overlay fade-out */
 @keyframes damageFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 .damage-overlay {
-  animation: damageFadeOut 1s ease-out forwards;
+  animation: damageFadeOut 1.5s ease-out forwards;
   will-change: opacity;
 }

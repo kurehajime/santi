@@ -22,7 +22,7 @@ export const GameElement: React.FC = () => {
     // small delay for UX
     const t = setTimeout(() => {
       setGameState((s) => s.preview(pick));
-      setTimeout(() => setGameState((s) => s.confirm()), 300);
+      setTimeout(() => setGameState((s) => s.confirm()), 500);
     }, 400);
     return () => clearTimeout(t);
   }, [gameState.mode, gameState.turn]);
