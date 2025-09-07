@@ -1,5 +1,6 @@
 import React from 'react';
 import type { GameState } from '../model/GameState';
+import type { CardId } from '../model/types';
 import { CardElement } from './CardElement';
 import { StatusElement } from './StatusElement';
 
@@ -12,9 +13,10 @@ type Props = {
   width: number;
   height: number;
   cardWidth?: number; // unified card width
+  onSelectHand?: (cardId: CardId) => void;
 };
 
-export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex, width, height, cardWidth }) => {
+export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex, width, height, cardWidth, onSelectHand }) => {
   const player = gameState.players[playerIndex];
   if (!player) return null;
 
@@ -29,6 +31,8 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
   const handIds = player.hands;
   const showBack = false; // player hand is face-up
   const n = Math.min(5, handIds.length);
+  const isMyTurn = gameState.turn === playerIndex && gameState.mode === 'playing';
+  const playable = isMyTurn ? new Set(gameState.playableHands()) : new Set<string>();
 
   // Hand placement below status
   const handX = gap;
@@ -54,11 +58,19 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
 
       {/* Hand */}
       <g transform={`translate(${handX}, ${handY})`} aria-label={`${seat}-hand`}>
-        {handIds.slice(0, n).map((cid, i) => (
-          <g key={i} transform={`translate(${i * stepX}, 0)`}>
-            <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
-          </g>
-        ))}
+        {handIds.slice(0, n).map((cid, i) => {
+          const canPlay = isMyTurn ? playable.has(cid) : false;
+          const handleClick = () => {
+            if (isMyTurn && canPlay) onSelectHand?.(cid);
+          };
+          return (
+            <g key={i} transform={`translate(${i * stepX}, 0)`} onClick={handleClick} style={{ cursor: canPlay ? 'pointer' as const : 'default' }}>
+              <g opacity={isMyTurn && !canPlay ? 0.4 : 1}>
+                <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
+              </g>
+            </g>
+          );
+        })}
       </g>
     </g>
   );

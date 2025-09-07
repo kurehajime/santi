@@ -1,5 +1,6 @@
 import React from 'react';
 import type { GameState } from '../model/GameState';
+import type { CardId } from '../model/types';
 import { PlayerFieldElement } from './PlayerFieldElement';
 import { CpuFieldElement } from './CpuFieldElement';
 
@@ -7,9 +8,10 @@ type Props = {
   gameState: GameState;
   width: number;
   height: number;
+  onSelectHand?: (cardId: CardId) => void;
 };
 
-export const FieldElement: React.FC<Props> = ({ gameState, width, height }) => {
+export const FieldElement: React.FC<Props> = ({ gameState, width, height, onSelectHand }) => {
   // Layout constants
   const PADDING = 16;
   const SEAT_FOOTPRINT_RATIO = 0.9; // general seat box width ratio
@@ -80,7 +82,15 @@ export const FieldElement: React.FC<Props> = ({ gameState, width, height }) => {
 
       {/* Bottom (YOU) */}
       <g transform={seatTransform('bottom', (w - seatW) / 2, h - seatH - 8, seatW, seatH)}>
-        <PlayerFieldElement gameState={gameState} seat="bottom" playerIndex={0} width={seatW} height={seatH} cardWidth={cardW} />
+        <PlayerFieldElement
+          gameState={gameState}
+          seat="bottom"
+          playerIndex={0}
+          width={seatW}
+          height={seatH}
+          cardWidth={cardW}
+          onSelectHand={onSelectHand}
+        />
       </g>
 
       {/* Open cards are rendered inside each seat component */}
