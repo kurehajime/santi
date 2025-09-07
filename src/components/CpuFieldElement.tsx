@@ -43,10 +43,12 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
 
   return (
     <g>
-      {/* Open card */}
-      <g transform={`translate(${ocX}, ${ocY})`} aria-label={`${seat}-open`}>
-        <CardElement id={player.openCard ?? null} width={cardW} faceUp={!!player.openCard} labelFallback="カード" />
-      </g>
+      {/* Open card (hide when player is down or none) */}
+      {player.life > 0 && player.openCard && (
+        <g transform={`translate(${ocX}, ${ocY})`} aria-label={`${seat}-open`}>
+          <CardElement id={player.openCard} width={cardW} faceUp={true} labelFallback="カード" />
+        </g>
+      )}
       {/* Status (scaled) */}
       <g transform={`translate(${gap}, ${gap}) scale(${STATUS_SCALE})`}>
         <StatusElement player={player} width={statusW} height={statusH} isActive={gameState.turn === playerIndex} />

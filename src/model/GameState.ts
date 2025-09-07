@@ -181,6 +181,12 @@ export class GameState {
     for (let i = 0; i < newState.players.length; i++) {
       newState.players[i].life = Math.max(0, newState.players[i].life - damage[i]);
     }
+    // 倒れたプレイヤーの場札をクリア
+    for (let i = 0; i < newState.players.length; i++) {
+      if (newState.players[i].life === 0) {
+        newState.players[i].openCard = null;
+      }
+    }
     // ターンを進める（Life>0のプレイヤーまでスキップ）
     const nextAlive = (() => {
       const n = Math.max(1, newState.players.length);
