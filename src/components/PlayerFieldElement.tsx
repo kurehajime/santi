@@ -31,8 +31,10 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
   const handIds = player.hands;
   const showBack = false; // player hand is face-up
   const n = Math.min(5, handIds.length);
-  const isMyTurn = gameState.turn === playerIndex && gameState.mode === 'playing';
-  const playable = isMyTurn ? new Set(gameState.playableHands()) : new Set<string>();
+  const isMyPhase = gameState.turn === playerIndex && (gameState.mode === 'playing' || gameState.mode === 'preview');
+  const playable = isMyPhase ? new Set(gameState.playableHands()) : new Set<string>();
+  const isPreview = gameState.mode === 'preview';
+  const selectedId = isPreview ? gameState.previewCard : null;
 
   // Hand placement below status
   const handX = gap;
@@ -59,13 +61,15 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
       {/* Hand */}
       <g transform={`translate(${handX}, ${handY})`} aria-label={`${seat}-hand`}>
         {handIds.slice(0, n).map((cid, i) => {
-          const canPlay = isMyTurn ? playable.has(cid) : false;
-          const handleClick = () => {
-            if (isMyTurn && canPlay) onSelectHand?.(cid);
+          const canPlay = isMyPhase ? playable.has(cid) : false;
+          const handleClick = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (isMyPhase && canPlay) onSelectHand?.(cid);
           };
+          const liftY = selectedId === cid ? -Math.round(cardH * 0.5) : 0;
           return (
-            <g key={i} transform={`translate(${i * stepX}, 0)`} onClick={handleClick} style={{ cursor: canPlay ? 'pointer' as const : 'default' }}>
-              <g opacity={isMyTurn && !canPlay ? 0.4 : 1}>
+            <g key={i} transform={`translate(${i * stepX}, ${liftY})`} onClick={handleClick} style={{ cursor: canPlay ? 'pointer' as const : 'default' }}>
+              <g opacity={isMyPhase && !canPlay ? 0.4 : 1}>
                 <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
               </g>
             </g>

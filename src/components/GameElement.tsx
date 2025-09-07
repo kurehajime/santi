@@ -37,31 +37,31 @@ export const GameElement: React.FC = () => {
           role="img"
           aria-label="Game Field"
           style={{ border: '1px solid #e5e7eb', borderRadius: 12, background: '#0b1020' }}
+          onClick={() => {
+            // click outside cards cancels preview
+            if (gameState.mode === 'preview') setGameState((s) => s.cancelPreview());
+          }}
         >
           <FieldElement
             gameState={gameState}
             width={width}
             height={height}
             onSelectHand={(cid) => {
-              // Human selects a card: go to preview
-              setGameState((s) => s.preview(cid));
+              // If same card selected again in preview, confirm. Otherwise set preview.
+              setGameState((s) => (s.mode === 'preview' && s.previewCard === cid ? s.confirm() : s.preview(cid)));
             }}
           />
         </svg>
-        {/* Controls */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', pointerEvents: 'none' }}>
-          {gameState.mode === 'introduction' && (
-            <div style={{ marginBottom: 12, pointerEvents: 'auto' }}>
-              <button onClick={() => setGameState((s) => s.start())} style={{ padding: '8px 16px', borderRadius: 8 }}>開始</button>
-            </div>
-          )}
-          {gameState.mode === 'preview' && gameState.turn === 0 && (
-            <div style={{ marginBottom: 12, display: 'flex', gap: 8, pointerEvents: 'auto' }}>
-              <button onClick={() => setGameState((s) => s.confirm())} style={{ padding: '8px 16px', borderRadius: 8 }}>決定</button>
-              <button onClick={() => setGameState((s) => s.cancelPreview())} style={{ padding: '8px 16px', borderRadius: 8 }}>キャンセル</button>
-            </div>
-          )}
-        </div>
+        {gameState.mode === 'introduction' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+            <button
+              onClick={() => setGameState((s) => s.start())}
+              style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
+            >
+              開始
+            </button>
+          </div>
+        )}
         {hover && hover.id && (
           <div
             style={{
