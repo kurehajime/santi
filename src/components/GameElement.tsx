@@ -1,9 +1,9 @@
 import React from 'react';
 import { GameState } from '../model/GameState';
-import { InitialGameState } from '../model/InitialGameState';
 import { FieldElement } from './FieldElement';
 import { CardHoverContext } from './CardHoverContext';
 import { CardElement } from './CardElement';
+import { InitialGameState } from '../model/InitialGameState';
 
 // フェーズ1: SVGでHello, worldを描画する最小実装
 export const GameElement: React.FC = () => {
