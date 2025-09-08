@@ -74,28 +74,54 @@ export const GameElement: React.FC = () => {
         )}
         {gameState.mode === 'gameover' && (
           <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
-            <button
-              onClick={() => {
-                setHover(null);
-                setGameState(InitialGameState());
-              }}
-              style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
-            >
-              再戦
-            </button>
+            {/* 最終順位一覧 */}
+            <div style={{ position: 'absolute', top: 300, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center' }}>
+              <div>
+                {(gameState.lastRanks ?? []).map((rk, idx) => {
+                  const seat = idx === 0 ? '南' : idx === 1 ? '東' : idx === 2 ? '北' : '西';
+                  return (
+                    <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{seat}: {rk}位</div>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+              <button
+                onClick={() => {
+                  setHover(null);
+                  setGameState(InitialGameState());
+                }}
+                style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
+              >
+                再戦
+              </button>
+            </div>
           </div>
         )}
         {gameState.mode === 'roundover' && (
-          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
-            <button
-              onClick={() => {
-                setHover(null);
-                setGameState((s) => s.nextRound());
-              }}
-              style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
-            >
-              次局
-            </button>
+          <div style={{ position: 'absolute', inset: 0 }}>
+            {/* 今回の星の増減（東西南北） */}
+            <div style={{ position: 'absolute', top: 300, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center' }}>
+              {(gameState.lastStarDelta ?? []).map((d, idx) => {
+                const seat = idx === 0 ? '南' : idx === 1 ? '東' : idx === 2 ? '北' : '西';
+                const sign = d > 0 ? '+' : '';
+                return (
+                  <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{seat}: {sign}{d}</div>
+                );
+              })}
+            </div>
+            {/* 次局ボタンを中央に固定 */}
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+              <button
+                onClick={() => {
+                  setHover(null);
+                  setGameState((s) => s.nextRound());
+                }}
+                style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
+              >
+                次局
+              </button>
+            </div>
           </div>
         )}
         {hover && hover.id && (

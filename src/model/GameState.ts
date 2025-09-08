@@ -12,6 +12,8 @@ export class GameState {
   readonly lastAttacker: number | null;
   readonly lastDamage: number[] | null;
   readonly eliminatedOrder: number[]; // indices of players in the order they were eliminated
+  readonly lastStarDelta: number[] | null;
+  readonly lastRanks: number[] | null;
 
   constructor(gameState?: GameState) {
     if (gameState) {
@@ -23,6 +25,8 @@ export class GameState {
       this.lastAttacker = (gameState as any).lastAttacker ?? null;
       this.lastDamage = (gameState as any).lastDamage ?? null;
       this.eliminatedOrder = deepClone((gameState as any).eliminatedOrder ?? []);
+      this.lastStarDelta = (gameState as any).lastStarDelta ? [...(gameState as any).lastStarDelta] : null;
+      this.lastRanks = (gameState as any).lastRanks ? [...(gameState as any).lastRanks] : null;
     } else {
       this.players = [];
       this.turn = 0;
@@ -32,6 +36,8 @@ export class GameState {
       this.lastAttacker = null;
       this.lastDamage = null;
       this.eliminatedOrder = [];
+      this.lastStarDelta = null;
+      this.lastRanks = null;
     }
   }
 
@@ -44,6 +50,8 @@ export class GameState {
     lastAttacker?: number | null;
     lastDamage?: number[] | null;
     eliminatedOrder?: number[];
+    lastStarDelta?: number[] | null;
+    lastRanks?: number[] | null;
   }): GameState {
     if (!init) return new GameState();
     const src = {
@@ -55,6 +63,8 @@ export class GameState {
       lastAttacker: init.lastAttacker ?? null,
       lastDamage: init.lastDamage ?? null,
       eliminatedOrder: init.eliminatedOrder ?? [],
+      lastStarDelta: init.lastStarDelta ?? null,
+      lastRanks: init.lastRanks ?? null,
     } as GameState;
     return new GameState(src);
   }
@@ -136,16 +146,18 @@ export class GameState {
       // Apply star deltas
       const deltaForRank = (rank: number) => (rank === 1 ? 2 : rank === 2 ? 1 : rank === 3 ? -1 : -2);
       let updated = this.clone();
+      const starDelta: number[] = Array(n).fill(0);
       for (let i = 0; i < n; i++) {
         const d = deltaForRank(rankByIdx[i]);
+        starDelta[i] = d;
         const cur = updated.players[i].stars ?? 4;
         updated.players[i].stars = Math.max(0, Math.min(8, cur + d));
       }
       // Check match end conditions: any 0 or 8 stars
       const endsMatch = updated.players.some((p) => p.stars <= 0 || p.stars >= 8);
-      if (endsMatch) return new GameState({ ...updated, mode: 'gameover' } as GameState);
+      if (endsMatch) return new GameState({ ...updated, mode: 'gameover', lastStarDelta: starDelta, lastRanks: rankByIdx } as GameState);
       // Otherwise, round over and wait for next round
-      return new GameState({ ...updated, mode: 'roundover' } as GameState);
+      return new GameState({ ...updated, mode: 'roundover', lastStarDelta: starDelta, lastRanks: rankByIdx } as GameState);
     }
     return this;
   }
@@ -177,6 +189,8 @@ export class GameState {
       lastAttacker: null,
       lastDamage: null,
       eliminatedOrder: [],
+      lastStarDelta: null,
+      lastRanks: null,
     }).start();
     return next;
   }
