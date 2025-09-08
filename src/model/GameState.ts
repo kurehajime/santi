@@ -1,7 +1,7 @@
 import type { CardId, Mode } from './types';
 import type { Player } from './Player';
-import { deepClone } from './util';
-import { CARDS } from './cards';
+import { deepClone, shuffle } from './util';
+import { CARDS, SPECIAL_CARD_IDS } from './cards';
 
 export class GameState {
   readonly players: Player[];
@@ -118,11 +118,67 @@ export class GameState {
 
   // If 0 or 1 players remain with life>0, go to gameover
   private checkGameOver(): GameState {
-    const alive = this.players.filter((p) => p.life > 0).length;
-    if (alive <= 1) {
-      return this.withMode('gameover');
+    const aliveIdx = this.players.map((p, i) => (p.life > 0 ? i : -1)).filter((i) => i >= 0);
+    if (aliveIdx.length <= 1) {
+      // Determine round ranking from elimination order
+      const n = this.players.length;
+      const elim = this.eliminatedOrder.slice();
+      // survivors (if any) appended as highest ranks (1位)
+      const survivors = aliveIdx.filter((i) => !elim.includes(i));
+      const order = elim.concat(survivors); // first eliminated first
+      // Compute per-player rank: first eliminated -> last place
+      const rankByIdx: number[] = Array(n).fill(n);
+      for (let pos = 0; pos < order.length; pos++) {
+        const idx = order[pos];
+        // rank = n - pos (pos=0 -> rank n, last -> rank 1)
+        rankByIdx[idx] = n - pos;
+      }
+      // Apply star deltas
+      const deltaForRank = (rank: number) => (rank === 1 ? 2 : rank === 2 ? 1 : rank === 3 ? -1 : -2);
+      let updated = this.clone();
+      for (let i = 0; i < n; i++) {
+        const d = deltaForRank(rankByIdx[i]);
+        const cur = updated.players[i].stars ?? 4;
+        updated.players[i].stars = Math.max(0, Math.min(8, cur + d));
+      }
+      // Check match end conditions: any 0 or 8 stars
+      const endsMatch = updated.players.some((p) => p.stars <= 0 || p.stars >= 8);
+      if (endsMatch) return new GameState({ ...updated, mode: 'gameover' } as GameState);
+      // Otherwise, round over and wait for next round
+      return new GameState({ ...updated, mode: 'roundover' } as GameState);
     }
     return this;
+  }
+
+  // Start next round: reset hands/deck/mana/life/openCard; keep stars
+  nextRound(): GameState {
+    const n = this.players.length;
+    const fixedIds = CARDS.filter((c) => c.isFixed).map((c) => c.id);
+    const shuffled: string[] = shuffle(SPECIAL_CARD_IDS as any);
+    const handsExtras: string[][] = Array.from({ length: n }, () => []);
+    let deckIndex = 0;
+    for (let i = 0; i < n; i++) {
+      handsExtras[i] = [shuffled[deckIndex++], shuffled[deckIndex++]];
+    }
+    const remainingDeck = shuffled.slice(deckIndex);
+    const players = this.players.map((p, i) => ({
+      openCard: null,
+      hands: [...fixedIds, ...handsExtras[i]],
+      mana: { green: 0, red: 0, blue: 0 },
+      life: 12,
+      stars: p.stars,
+    }));
+    const next = GameState.create({
+      players,
+      turn: 0,
+      deck: remainingDeck,
+      previewCard: null,
+      state: 'playing',
+      lastAttacker: null,
+      lastDamage: null,
+      eliminatedOrder: [],
+    }).start();
+    return next;
   }
 
   private withPlayedCard(playerIndex: number, cardId: CardId): GameState {

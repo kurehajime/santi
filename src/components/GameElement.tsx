@@ -85,6 +85,19 @@ export const GameElement: React.FC = () => {
             </button>
           </div>
         )}
+        {gameState.mode === 'roundover' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+            <button
+              onClick={() => {
+                setHover(null);
+                setGameState((s) => s.nextRound());
+              }}
+              style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
+            >
+              次局
+            </button>
+          </div>
+        )}
         {hover && hover.id && (
           <div
             style={{

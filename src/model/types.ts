@@ -1,5 +1,4 @@
 // Basic shared types for the game
 export type CardId = string;
 
-export type Mode = 'introduction' | 'playing' | 'preview' | 'gameover';
-
+export type Mode = 'introduction' | 'playing' | 'preview' | 'roundover' | 'gameover';

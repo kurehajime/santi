@@ -7,6 +7,7 @@ export interface Player {
   hands: CardId[];
   mana: Mana;
   life: number;
+  stars: number;
 }
 
 export const createPlayer = (partial?: Partial<Player>): Player => ({
@@ -14,5 +15,5 @@ export const createPlayer = (partial?: Partial<Player>): Player => ({
   hands: partial?.hands ?? [],
   mana: partial?.mana ?? createMana(),
   life: partial?.life ?? 12,
+  stars: partial?.stars ?? 4,
 });
-

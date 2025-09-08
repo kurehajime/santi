@@ -9,12 +9,22 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
   // Horizontal row metrics
   const fsMana = Math.max(14, Math.round(height * 0.6)); // bigger font for mana
   const fsHp = Math.max(14, Math.round(height * 0.6));
-  const colW = Math.max(1, (width - pad * 2) / 4);
-  const colCenter = (i: number) => pad + colW * (i + 0.5);
-  const manaShiftX = Math.max(6, Math.round(width * 0.04)); // shift mana a bit to the right
+  // Reserve right-side area for stars, and keep HP/mana within left content area
+  const starCell = Math.max(8, Math.round(height * 0.22));
+  const starGapX = Math.max(2, Math.round(starCell * 0.2));
+  const starGapY = Math.max(2, Math.round(starCell * 0.2));
+  const starBlockW = starCell * 4 + starGapX * 3; // 4 columns
+  const rightPadding = pad; // spacing between content and star block
+  const contentW = Math.max(40, width - pad * 2 - rightPadding - starBlockW);
+  const contentStartX = pad;
+  const colW = Math.max(1, contentW / 4);
+  const colCenter = (i: number) => contentStartX + colW * (i + 0.5);
+  const manaShiftX = Math.max(4, Math.round(colW * 0.1)); // small nudge to the right within content
 
   const bgFill = isActive ? '#fffbeb' : '#fafafa';
   const bgStroke = isActive ? '#f59e0b' : '#d1d5db';
+  const starColor = '#fbbf24'; // amber-400
+  const emptyStarColor = '#e5e7eb';
   // If defeated, show placement only
   if (player.life <= 0 && rank) {
     const r = Math.round(Math.min(width, height) * 0.08);
@@ -34,6 +44,31 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
   return (
     <g>
       <rect x={0} y={0} width={width} height={height} rx={r} fill={bgFill} stroke={bgStroke} />
+      {/* Stars (two rows, up to 8) */}
+      {(() => {
+        const maxStars = 8;
+        const owned = Math.max(0, Math.min(maxStars, player.stars ?? 0));
+        const cell = starCell;
+        const gapX = starGapX;
+        const gapY = starGapY;
+        const totalW = starBlockW;
+        const startX = width - pad - totalW; // pinned to right
+        const startY = pad * 0.6;
+        const items: React.ReactElement[] = [];
+        for (let i = 0; i < maxStars; i++) {
+          const row = Math.floor(i / 4);
+          const col = i % 4;
+          const x = startX + col * (cell + gapX);
+          const y = startY + row * (cell + gapY);
+          const filled = i < owned;
+          items.push(
+            <text key={`star-${i}`} x={x + cell / 2} y={y + cell / 2} textAnchor="middle" dominantBaseline="middle" fontSize={cell * 0.9} fill={filled ? starColor : emptyStarColor}>
+              {'\u2605'}
+            </text>
+          );
+        }
+        return <g aria-label="stars">{items}</g>;
+      })()}
       {/* Column 0: HP */}
       <text x={colCenter(0)} y={height / 2} textAnchor="middle" dominantBaseline="middle" fontSize={fsHp} fill="#111827">
         {'\u2665'}{player.life}
