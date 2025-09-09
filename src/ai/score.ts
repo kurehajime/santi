@@ -92,6 +92,7 @@ export const scoreCard = (gs: GameState, cardId: CardId): number => {
     gs.players.filter((p) => p.openCard && CARDS_MAP[p.openCard!]?.color === color).length;
   const maxOtherMana = (color: 'green' | 'red' | 'blue') =>
     Math.max(...gs.players.filter((_, i) => i !== turn).map((p) => p.mana[color]));
+  const otherBlueMana = gs.players.filter((p, i) => i !== turn && p.openCard && CARDS_MAP[p.openCard!]?.color === 'blue').map(p => p.mana.blue).reduce((a, b) => a + b, 0);
 
   switch (card.id) {
     case 'axe_soldier':
@@ -119,7 +120,7 @@ export const scoreCard = (gs: GameState, cardId: CardId): number => {
       if (me.mana.red <= 2) score += -10;
       break;
     case 'kraken':
-      if (me.mana.blue <= 2) score += -10;
+      if (otherBlueMana > 2) score += otherBlueMana;
       break;
     case 'forest_spirit':
       if (me.life <= 9) score += (12 - me.life) * 2;
