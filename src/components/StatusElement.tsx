@@ -34,9 +34,8 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
     return (
       <g>
         <rect x={0} y={0} width={width} height={height} rx={r} fill={bgFill} stroke={bgStroke} />
-        <text x={width / 2} y={height / 2} textAnchor="middle" dominantBaseline="middle" fontSize={fs} fill="#111827">
-          {rank}位
-        </text>
+        <text x={width / 2} y={height / 2 - fs * 0.1} textAnchor="middle" dominantBaseline="middle" fontSize={fs} fill="#111827">{rank}位</text>
+        <text x={width / 2} y={height / 2 + fs * 0.6} textAnchor="middle" dominantBaseline="middle" fontSize={Math.max(12, Math.round(fs * 0.6))} fill="#6b7280">★{player.stars ?? 0}</text>
       </g>
     );
   }

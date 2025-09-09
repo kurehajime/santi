@@ -155,7 +155,14 @@ export class GameState {
       }
       // Check match end conditions: any 0 or 8 stars
       const endsMatch = updated.players.some((p) => p.stars <= 0 || p.stars >= 8);
-      if (endsMatch) return new GameState({ ...updated, mode: 'gameover', lastStarDelta: starDelta, lastRanks: rankByIdx } as GameState);
+      if (endsMatch) {
+        // Final standings by stars (desc). Tie-break by better round rank, then seat index.
+        const tuples = updated.players.map((p, i) => ({ idx: i, stars: p.stars ?? 0, roundRank: rankByIdx[i] ?? 4 }));
+        tuples.sort((a, b) => (b.stars - a.stars) || (a.roundRank - b.roundRank) || (a.idx - b.idx));
+        const finalRanks: number[] = Array(n).fill(n);
+        tuples.forEach((t, pos) => { finalRanks[t.idx] = pos + 1; });
+        return new GameState({ ...updated, mode: 'gameover', lastStarDelta: starDelta, lastRanks: finalRanks } as GameState);
+      }
       // Otherwise, round over and wait for next round
       return new GameState({ ...updated, mode: 'roundover', lastStarDelta: starDelta, lastRanks: rankByIdx } as GameState);
     }

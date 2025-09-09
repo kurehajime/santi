@@ -77,12 +77,18 @@ export const GameElement: React.FC = () => {
             {/* 最終順位一覧 */}
             <div style={{ position: 'absolute', top: 300, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center' }}>
               <div>
-                {(gameState.lastRanks ?? []).map((rk, idx) => {
-                  const seat = idx === 0 ? '南' : idx === 1 ? '東' : idx === 2 ? '北' : '西';
-                  return (
-                    <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{seat}: {rk}位</div>
-                  );
-                })}
+                {(() => {
+                  const ranks = gameState.lastRanks ?? [];
+                  const idxs = ranks.map((_, i) => i).sort((a, b) => (ranks[a] - ranks[b]) || (a - b));
+                  return idxs.map((idx) => {
+                    const rk = ranks[idx];
+                    const seat = idx === 0 ? '南' : idx === 1 ? '西' : idx === 2 ? '北' : '東';
+                    const stars = gameState.players[idx]?.stars ?? 0;
+                    return (
+                      <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{rk}位: {seat} （★{stars}）</div>
+                    );
+                  });
+                })()}
               </div>
             </div>
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -103,7 +109,7 @@ export const GameElement: React.FC = () => {
             {/* 今回の星の増減（東西南北） */}
             <div style={{ position: 'absolute', top: 300, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center' }}>
               {(gameState.lastStarDelta ?? []).map((d, idx) => {
-                const seat = idx === 0 ? '南' : idx === 1 ? '東' : idx === 2 ? '北' : '西';
+                const seat = idx === 0 ? '南' : idx === 1 ? '西' : idx === 2 ? '北' : '東';
                 const sign = d > 0 ? '+' : '';
                 return (
                   <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{seat}: {sign}{d}</div>
