@@ -25,7 +25,7 @@ export const InitialGameState = (): GameState => {
 
   const remainingDeck = shuffled.slice(deckIndex);
 
-  const fixedIds = CARDS.filter((c) => c.isFixed).map((c) => c.id);
+  const fixedIds = CARDS.filter((c) => !c.isSpecial).map((c) => c.id);
 
   const players = Array.from({ length: playersCount }, (_, i) =>
     createPlayer({

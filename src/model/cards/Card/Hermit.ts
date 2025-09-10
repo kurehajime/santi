@@ -12,7 +12,7 @@ export class Hermit extends Card {
       color: 'blue',
       gainMana: { green: 0, red: 0, blue: 1 } as Mana,
       text: '受けるダメージをすべての赤プレイヤーに転嫁',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   hookDamageCounter(_gs: GameState, _damage: number): [number, number, number, number] {
@@ -29,4 +29,3 @@ export class Hermit extends Card {
     return true;
   }
 }
-

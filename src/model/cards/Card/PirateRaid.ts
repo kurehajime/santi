@@ -12,11 +12,10 @@ export class PirateRaid extends Card {
       color: 'blue',
       gainMana: { green: 0, red: 0, blue: 1 } as Mana,
       text: '赤プレイヤーに2の[赤プレイヤーの数]乗ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
     return damagePowByColor(_gs, "red");
   }
 }
-

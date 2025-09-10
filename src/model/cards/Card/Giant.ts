@@ -10,7 +10,7 @@ export class Giant extends Card {
       color: 'green',
       gainMana: { green: 0, red: 0, blue: 0 } as Mana,
       text: '自分の🟢を×3する',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   extendGainMana(_gs: any): { green: number, red: number, blue: number } {
@@ -19,4 +19,3 @@ export class Giant extends Card {
     return { green: gain, red: 0, blue: 0 } as Mana;
   }
 }
-

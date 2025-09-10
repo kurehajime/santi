@@ -16,7 +16,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const name = id ? CARDS_MAP[id]?.name ?? String(id) : labelFallback;
   const color = id ? CARDS_MAP[id]?.color ?? 'green' : 'green';
   const gain = id ? CARDS_MAP[id]?.gainMana ?? { green: 0, red: 0, blue: 0 } : { green: 0, red: 0, blue: 0 };
-  const isFixed = id ? !!CARDS_MAP[id]?.isFixed : false;
+  const isInfinite = id ? !CARDS_MAP[id]?.isSpecial : false;
 
   // layout metrics
   const padX = Math.max(8, Math.round(width * 0.06)); // horizontal padding
@@ -85,8 +85,8 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
             </text>
           </g>
 
-          {/* fixed card mark (∞) */}
-          {isFixed && (
+          {/* fixed/infinite card mark (∞) */}
+          {isInfinite && (
             <text
               x={width - padX}
               y={padY + headerH * 0.7}

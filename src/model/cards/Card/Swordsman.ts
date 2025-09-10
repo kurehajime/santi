@@ -12,11 +12,10 @@ export class Swordsman extends Card {
       color: 'red',
       gainMana: { green: 0, red: 1, blue: 0 } as Mana,
       text: '緑プレイヤーに🔴×1ダメージ',
-      isFixed: true,
+      isSpecial: false,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
     return damageByColor(_gs, 'red', 'green');
   }
 }
-

@@ -11,7 +11,7 @@ export class ForestSpirit extends Card {
       color: 'green',
       gainMana: { green: 0, red: 0, blue: 0 } as Mana,
       text: '[12 - 現在Life]の🟢を得る',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   extendGainMana(_gs: GameState): { green: number, red: number, blue: number } {
@@ -20,4 +20,3 @@ export class ForestSpirit extends Card {
     return { green: gain, red: 0, blue: 0 } as Mana;
   }
 }
-

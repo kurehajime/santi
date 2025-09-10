@@ -12,7 +12,7 @@ export class Dragon extends Card {
       color: 'red',
       gainMana: { green: 0, red: 0, blue: 0 } as Mana,
       text: '緑プレイヤーに🔴×2ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {

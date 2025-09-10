@@ -14,7 +14,7 @@ export class Succubus extends Card {
       color: 'blue',
       gainMana: { green: 0, red: 0, blue: 1 } as Mana,
       text: '赤プレイヤーに🔵×1ダメージ。赤プレイヤーは次も赤しか出せない。',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
@@ -32,4 +32,3 @@ export class Succubus extends Card {
     return hands;
   }
 }
-

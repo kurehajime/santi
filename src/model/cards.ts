@@ -40,7 +40,7 @@ export const CARDS: readonly Card[] = [
 ] as const;
 
 export const ALL_CARD_IDS: readonly CardId[] = CARDS.map((c) => c.id);
-export const SPECIAL_CARD_IDS: readonly CardId[] = CARDS.filter((c) => !c.isFixed).map((c) => c.id);
+export const SPECIAL_CARD_IDS: readonly CardId[] = CARDS.filter((c) => c.isSpecial).map((c) => c.id);
 
 export const CARD_NAME_JA: Record<string, string> = Object.fromEntries(
   CARDS.map((c) => [c.id, c.name] as const)
@@ -50,5 +50,5 @@ export const CARDS_MAP: Record<CardId, Card> = Object.fromEntries(CARDS.map((c) 
 
 export type SpecialCardId = (typeof SPECIAL_CARD_IDS)[number];
 
-export const isFixedCardId = (id: CardId): boolean => CARDS_MAP[id]?.isFixed === true;
-export const isFixedCard = (card: Card): boolean => card.isFixed === true;
+export const isSpecialCardId = (id: CardId): boolean => CARDS_MAP[id]?.isSpecial === true;
+export const isSpecialCard = (card: Card): boolean => card.isSpecial === true;

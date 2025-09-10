@@ -12,11 +12,10 @@ export class ArmyCharge extends Card {
       color: 'red',
       gainMana: { green: 0, red: 1, blue: 0 } as Mana,
       text: '緑プレイヤーに2の[緑プレイヤーの数]乗ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
     return damagePowByColor(_gs, "green");
   }
 }
-

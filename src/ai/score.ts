@@ -1,5 +1,5 @@
 import type { CardId } from '../model/types';
-import { CARDS, CARDS_MAP, isFixedCard } from '../model/cards';
+import { CARDS, CARDS_MAP, isSpecialCard } from '../model/cards';
 import type { GameState } from '../model/GameState';
 
 // Simulate damage array if the current turn player plays cardId.
@@ -87,7 +87,7 @@ export const scoreCard = (gs: GameState, cardId: CardId): number => {
 
   // カード評価値
   const hand = me.hands.map((id) => CARDS_MAP[id]);
-  const countNonFixed = (color: 'green' | 'red' | 'blue') => hand.filter((c) => !isFixedCard(c) && c.color === color).length;
+  const countSpecial = (color: 'green' | 'red' | 'blue') => hand.filter((c) => isSpecialCard(c) && c.color === color).length;
   const countPlayersByColor = (color: 'green' | 'red' | 'blue') =>
     gs.players.filter((p) => p.openCard && CARDS_MAP[p.openCard!]?.color === color).length;
   const maxOtherMana = (color: 'green' | 'red' | 'blue') =>
@@ -96,13 +96,13 @@ export const scoreCard = (gs: GameState, cardId: CardId): number => {
 
   switch (card.id) {
     case 'axe_soldier':
-      score += countNonFixed('green') * 1;
+      score += countSpecial('green') * 1;
       break;
     case 'swordsman':
-      score += countNonFixed('red') * 1.5;
+      score += countSpecial('red') * 1.5;
       break;
     case 'spearman':
-      score += countNonFixed('blue') * 1;
+      score += countSpecial('blue') * 1;
       break;
     case 'peasant_uprising':
       if (countPlayersByColor('blue') <= 1) score += -10;

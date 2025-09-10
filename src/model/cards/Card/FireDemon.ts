@@ -11,7 +11,7 @@ export class FireDemon extends Card {
       color: 'red',
       gainMana: { green: 0, red: 0, blue: 0 } as Mana,
       text: '自分以外の全員に🔴×1ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
@@ -25,4 +25,3 @@ export class FireDemon extends Card {
     return damage;
   }
 }
-

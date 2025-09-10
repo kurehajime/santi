@@ -12,7 +12,7 @@ export class BombRock extends Card {
       color: 'red',
       gainMana: { green: 0, red: 1, blue: 0 } as Mana,
       text: '緑プレイヤーに🔴×緑プレイヤーの数ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
@@ -28,4 +28,3 @@ export class BombRock extends Card {
     return damages;
   }
 }
-

@@ -12,11 +12,10 @@ export class Spearman extends Card {
       color: 'blue',
       gainMana: { green: 0, red: 0, blue: 1 } as Mana,
       text: '赤プレイヤーに🔵×1ダメージ',
-      isFixed: true,
+      isSpecial: false,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
     return damageByColor(_gs, 'blue', 'red');
   }
 }
-

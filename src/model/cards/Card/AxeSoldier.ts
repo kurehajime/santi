@@ -12,11 +12,10 @@ export class AxeSoldier extends Card {
       color: 'green',
       gainMana: { green: 1, red: 0, blue: 0 } as Mana,
       text: '青プレイヤーに🟢×1ダメージ',
-      isFixed: true,
+      isSpecial: false,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
     return damageByColor(_gs, 'green', 'blue');
   }
 }
-

@@ -172,7 +172,7 @@ export class GameState {
   // Start next round: reset hands/deck/mana/life/openCard; keep stars
   nextRound(): GameState {
     const n = this.players.length;
-    const fixedIds = CARDS.filter((c) => c.isFixed).map((c) => c.id);
+    const fixedIds = CARDS.filter((c) => !c.isSpecial).map((c) => c.id);
     const shuffled: string[] = shuffle(SPECIAL_CARD_IDS as any);
     const handsExtras: string[][] = Array.from({ length: n }, () => []);
     let deckIndex = 0;
@@ -213,7 +213,7 @@ export class GameState {
       throw Error(`Player ${turnPlayer} cannot play card ${cardId}`);
     }
     const card = CARDS.find((c) => c.id === cardId);
-    if (!card?.isFixed) {
+    if (card?.isSpecial) {
       newState.players[playerIndex].hands = newState.players[playerIndex].hands.filter((c) => c !== cardId);
     }
     newState.players[playerIndex].openCard = cardId;

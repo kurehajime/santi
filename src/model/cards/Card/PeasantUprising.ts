@@ -12,11 +12,10 @@ export class PeasantUprising extends Card {
       color: 'green',
       gainMana: { green: 1, red: 0, blue: 0 } as Mana,
       text: '青プレイヤーに2の[青プレイヤーの数]乗ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   damage(_gs: GameState): [number, number, number, number] {
     return damagePowByColor(_gs, "blue");
   }
 }
-

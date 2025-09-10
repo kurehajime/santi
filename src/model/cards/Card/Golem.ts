@@ -11,7 +11,7 @@ export class Golem extends Card {
       color: 'green',
       gainMana: { green: 2, red: 0, blue: 0 } as Mana,
       text: '偶数のダメージを受けない',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   hookDamageCancel(_gs: GameState, _damage: number): boolean {
@@ -21,4 +21,3 @@ export class Golem extends Card {
     return false;
   }
 }
-

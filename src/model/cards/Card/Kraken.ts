@@ -12,7 +12,7 @@ export class Kraken extends Card {
       color: 'blue',
       gainMana: { green: 0, red: 0, blue: 0 } as Mana,
       text: '他の青プレイヤーの🔵の合計のマナを得る。赤プレイヤーに🔵×１ダメージ',
-      isFixed: false,
+      isSpecial: true,
     });
   }
   extendGainMana(_gs: GameState): { green: number; red: number; blue: number; } {
@@ -30,4 +30,3 @@ export class Kraken extends Card {
     return damageByColor(_gs, 'blue', 'red');
   }
 }
-
