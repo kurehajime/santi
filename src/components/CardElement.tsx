@@ -16,7 +16,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
   const name = id ? CARDS_MAP[id]?.name ?? String(id) : labelFallback;
   const color = id ? CARDS_MAP[id]?.color ?? 'green' : 'green';
   const gain = id ? CARDS_MAP[id]?.gainMana ?? { green: 0, red: 0, blue: 0 } : { green: 0, red: 0, blue: 0 };
-  const isInfinite = id ? !CARDS_MAP[id]?.isSpecial : false;
+  // no infinite visual mark per new rule
 
   // layout metrics
   const padX = Math.max(8, Math.round(width * 0.06)); // horizontal padding
@@ -85,19 +85,7 @@ export const CardElement: React.FC<Props> = ({ id, width, faceUp = false, labelF
             </text>
           </g>
 
-          {/* fixed/infinite card mark (∞) */}
-          {isInfinite && (
-            <text
-              x={width - padX}
-              y={padY + headerH * 0.7}
-              textAnchor="end"
-              fontSize={Math.max(14, Math.round(headerH * 0.9))}
-              fill={headerTextColor}
-              opacity={0.35}
-            >
-              {'\u221E'}
-            </text>
-          )}
+          {/* no infinite mark per new rule */}
 
           {/* art box */}
           <g transform={`translate(${padX}, ${padY + headerH})`}>

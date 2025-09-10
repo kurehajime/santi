@@ -27,14 +27,18 @@ export const InitialGameState = (): GameState => {
 
   const fixedIds = CARDS.filter((c) => !c.isSpecial).map((c) => c.id);
 
-  const players = Array.from({ length: playersCount }, (_, i) =>
-    createPlayer({
+  const players = Array.from({ length: playersCount }, (_, i) => {
+    const p = createPlayer({
       openCard: null,
-      hands: [...fixedIds, ...handsExtras[i]],
+      hands: [],
       mana: createMana(0, 0, 0),
       life: 12,
-    })
-  );
+    });
+    // add non-special cards up to maxHands copies per id
+    const nonSpecialCopies = fixedIds.flatMap((id) => Array.from({ length: p.maxHands }, () => id));
+    p.hands = [...nonSpecialCopies, ...handsExtras[i]];
+    return p;
+  });
 
   return GameState.create({
     players,

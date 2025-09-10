@@ -31,6 +31,10 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
   const handIds = player.hands;
   const showBack = true; // CPU hand is face-down
   const n = handIds.length; // show all cards, even if more than 5
+  const counts = new Map<string, number>();
+  handIds.forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
+  const groups = Array.from(counts.entries());
+  const g = groups.length;
 
   // Unified layout with Player: status on top-left, hand below, horizontal spread
   const handX = gap;
@@ -38,7 +42,7 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
   const statusRenderedH = Math.round(statusH * STATUS_SCALE);
   const handY = statusRenderedH + gap * 2;
   const availableW = width - gap * 2;
-  const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
+  const stepX = g > 1 ? Math.min(cardW + gap, (availableW - cardW) / (g - 1)) : 0;
 
   // Open card placement: fixed to seat center (do not link to hand layout)
   const ocX = Math.round((width - cardW) / 2);
@@ -75,9 +79,14 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
 
       {/* Hand */}
       <g transform={`translate(${handX}, ${handY})`} aria-label={`${seat}-hand`}>
-        {handIds.slice(0, n).map((cid, i) => (
+        {groups.map(([cid, cnt], i) => (
           <g key={i} transform={`translate(${i * stepX}, 0)`}>
             <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
+            {cnt > 1 && (
+              <text x={cardW - 6} y={cardH - 6} textAnchor="end" fontSize={Math.round(cardW * 0.28)} fill="#ffffff" opacity={0.7}>
+                ×{cnt}
+              </text>
+            )}
           </g>
         ))}
       </g>

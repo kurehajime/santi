@@ -33,6 +33,11 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
   const handIds = player.hands;
   const showBack = gameState.mode === 'introduction'; // before start, show back side
   const n = handIds.length; // show all cards, even if more than 5
+  // Group same cards and show stacked with counts
+  const counts = new Map<string, number>();
+  handIds.forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
+  const groups = Array.from(counts.entries());
+  const g = groups.length;
   const isMyPhase = gameState.turn === playerIndex && (gameState.mode === 'playing' || gameState.mode === 'preview');
   const playable = isMyPhase ? new Set(gameState.playableHands()) : new Set<string>();
   const isPreview = gameState.mode === 'preview';
@@ -45,7 +50,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
   const statusRenderedH = Math.round(statusH * STATUS_SCALE);
   const handY = statusRenderedH + gap * 2;
   const availableW = width - gap * 2;
-  const stepX = n > 1 ? Math.min(cardW + gap, (availableW - cardW) / (n - 1)) : 0;
+  const stepX = g > 1 ? Math.min(cardW + gap, (availableW - cardW) / (g - 1)) : 0;
 
   // Open card placement: fixed to seat center (do not link to hand layout)
   const ocX = Math.round((width - cardW) / 2);
@@ -83,7 +88,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
 
       {/* Hand */}
       <g transform={`translate(${handX}, ${handY})`} aria-label={`${seat}-hand`}>
-        {handIds.slice(0, n).map((cid, i) => {
+        {groups.map(([cid, cnt], i) => {
           const canPlay = isMyPhase ? playable.has(cid) : false;
           const handleClick = (e: React.MouseEvent) => {
             e.stopPropagation();
@@ -95,6 +100,11 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
               <g opacity={isMyPhase && !canPlay ? 0.4 : 1}>
                 <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
               </g>
+              {cnt > 1 && (
+                <text x={cardW - 6} y={cardH - 6} textAnchor="end" fontSize={Math.round(cardW * 0.28)} fill="#ffffff" opacity={0.7}>
+                  ×{cnt}
+                </text>
+              )}
             </g>
           );
         })}

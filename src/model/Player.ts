@@ -8,6 +8,7 @@ export interface Player {
   mana: Mana;
   life: number;
   stars: number;
+  maxHands: number; // maximum initial copies for non-special cards (per card id)
 }
 
 export const createPlayer = (partial?: Partial<Player>): Player => ({
@@ -16,4 +17,5 @@ export const createPlayer = (partial?: Partial<Player>): Player => ({
   mana: partial?.mana ?? createMana(),
   life: partial?.life ?? 12,
   stars: partial?.stars ?? 4,
+  maxHands: partial?.maxHands ?? 5,
 });

@@ -182,10 +182,14 @@ export class GameState {
     const remainingDeck = shuffled.slice(deckIndex);
     const players = this.players.map((p, i) => ({
       openCard: null,
-      hands: [...fixedIds, ...handsExtras[i]],
+      hands: [
+        ...fixedIds.flatMap((id) => Array.from({ length: p.maxHands ?? 5 }, () => id)),
+        ...handsExtras[i],
+      ],
       mana: { green: 0, red: 0, blue: 0 },
       life: 12,
       stars: p.stars,
+      maxHands: p.maxHands ?? 5,
     }));
     const next = GameState.create({
       players,
@@ -212,9 +216,12 @@ export class GameState {
     if (!handCard) {
       throw Error(`Player ${turnPlayer} cannot play card ${cardId}`);
     }
-    const card = CARDS.find((c) => c.id === cardId);
-    if (card?.isSpecial) {
-      newState.players[playerIndex].hands = newState.players[playerIndex].hands.filter((c) => c !== cardId);
+    // consume one copy regardless of special or not
+    const arr = newState.players[playerIndex].hands.slice();
+    const rmIdx = arr.indexOf(cardId);
+    if (rmIdx >= 0) {
+      arr.splice(rmIdx, 1);
+      newState.players[playerIndex].hands = arr;
     }
     newState.players[playerIndex].openCard = cardId;
     return newState;
