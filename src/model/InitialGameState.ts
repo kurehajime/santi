@@ -1,6 +1,7 @@
 import { GameState } from './GameState';
 import { createMana } from './Mana';
 import { createPlayer } from './Player';
+import { MAX_NON_SPECIAL_COPIES } from '../config/constants';
 import { CARDS, SPECIAL_CARD_IDS } from './cards';
 import { shuffle } from './util';
 
@@ -35,7 +36,7 @@ export const InitialGameState = (): GameState => {
       life: 12,
     });
     // add non-special cards up to maxHands copies per id
-    const nonSpecialCopies = fixedIds.flatMap((id) => Array.from({ length: p.maxHands }, () => id));
+    const nonSpecialCopies = fixedIds.flatMap((id) => Array.from({ length: p.maxHands ?? MAX_NON_SPECIAL_COPIES }, () => id));
     p.hands = [...nonSpecialCopies, ...handsExtras[i]];
     return p;
   });

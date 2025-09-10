@@ -16,7 +16,7 @@ export const GameElement: React.FC = () => {
   // CPU auto-play: when mode is playing and it's not human's turn
   React.useEffect(() => {
     if (gameState.mode !== 'playing') return;
-    // If no playable cards for current player, they lose immediately
+    // If no playable cards for current player (human or CPU), they immediately lose
     if (gameState.playableHands().length === 0) {
       setGameState((s) => s.loseIfNoPlayable());
       return;

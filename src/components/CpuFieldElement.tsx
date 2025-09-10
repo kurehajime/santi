@@ -30,7 +30,7 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
 
   const handIds = player.hands;
   const showBack = true; // CPU hand is face-down
-  const n = handIds.length; // show all cards, even if more than 5
+  // const n = handIds.length; // show all cards, even if more than 5 (unused when grouping)
   const counts = new Map<string, number>();
   handIds.forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
   const groups = Array.from(counts.entries());
@@ -82,11 +82,20 @@ export const CpuFieldElement: React.FC<Props> = ({ gameState, seat, playerIndex,
         {groups.map(([cid, cnt], i) => (
           <g key={i} transform={`translate(${i * stepX}, 0)`}>
             <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
-            {cnt > 1 && (
-              <text x={cardW - 6} y={cardH - 6} textAnchor="end" fontSize={Math.round(cardW * 0.28)} fill="#ffffff" opacity={0.7}>
-                ×{cnt}
-              </text>
-            )}
+            {cnt > 1 && (() => {
+              const fs = Math.round(cardW * 0.32);
+              const pad = 6;
+              const boxW = fs * 1.6;
+              const boxH = fs * 0.9;
+              const bx = pad;
+              const by = cardH - boxH - pad;
+              return (
+                <g style={{ pointerEvents: 'none' }}>
+                  <rect x={bx} y={by} width={boxW} height={boxH} rx={Math.round(boxH * 0.3)} fill="#111827" opacity={0.6} />
+                  <text x={bx + boxW / 2} y={by + boxH / 2} textAnchor="middle" dominantBaseline="middle" fontSize={fs} fill="#ffffff">×{cnt}</text>
+                </g>
+              );
+            })()}
           </g>
         ))}
       </g>

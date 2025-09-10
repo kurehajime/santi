@@ -206,6 +206,34 @@ export class GameState {
     return next;
   }
 
+  // If current player has no playable cards this turn, they lose immediately
+  loseIfNoPlayable(): GameState {
+    if (this.playableHands().length > 0) return this;
+    let newState = this.clone();
+    const turnIdx = this.turn;
+    const wasAlive = newState.players[turnIdx].life > 0;
+    newState.players[turnIdx].life = 0;
+    newState.players[turnIdx].openCard = null;
+    if (wasAlive && !newState.eliminatedOrder.includes(turnIdx)) {
+      newState = new GameState({
+        ...newState,
+        eliminatedOrder: [...newState.eliminatedOrder, turnIdx],
+      } as GameState);
+    }
+    // advance to next alive
+    const nextAlive = (() => {
+      const n = Math.max(1, newState.players.length);
+      let idx = newState.turn;
+      for (let i = 0; i < n; i++) {
+        idx = (idx + 1) % n;
+        if (newState.players[idx]?.life > 0) return idx;
+      }
+      return newState.turn;
+    })();
+    newState = new GameState({ ...newState, turn: nextAlive } as GameState);
+    return newState.checkGameOver();
+  }
+
   private withPlayedCard(playerIndex: number, cardId: CardId): GameState {
     let newState = this.clone();
     const turnPlayer = this.players[this.turn];

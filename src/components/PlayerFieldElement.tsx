@@ -32,7 +32,7 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
 
   const handIds = player.hands;
   const showBack = gameState.mode === 'introduction'; // before start, show back side
-  const n = handIds.length; // show all cards, even if more than 5
+  // const n = handIds.length; // show all cards, even if more than 5 (unused when grouping)
   // Group same cards and show stacked with counts
   const counts = new Map<string, number>();
   handIds.forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
@@ -100,11 +100,20 @@ export const PlayerFieldElement: React.FC<Props> = ({ gameState, seat, playerInd
               <g opacity={isMyPhase && !canPlay ? 0.4 : 1}>
                 <CardElement id={cid} width={cardW} faceUp={!showBack} labelFallback="手札" />
               </g>
-              {cnt > 1 && (
-                <text x={cardW - 6} y={cardH - 6} textAnchor="end" fontSize={Math.round(cardW * 0.28)} fill="#ffffff" opacity={0.7}>
-                  ×{cnt}
-                </text>
-              )}
+              {cnt > 1 && (() => {
+                const fs = Math.round(cardW * 0.32);
+                const pad = 6;
+                const boxW = fs * 1.6;
+                const boxH = fs * 0.9;
+                const bx = pad;
+                const by = cardH - boxH - pad;
+                return (
+                  <g style={{ pointerEvents: 'none' }}>
+                    <rect x={bx} y={by} width={boxW} height={boxH} rx={Math.round(boxH * 0.3)} fill="#111827" opacity={0.6} />
+                    <text x={bx + boxW / 2} y={by + boxH / 2} textAnchor="middle" dominantBaseline="middle" fontSize={fs} fill="#ffffff">×{cnt}</text>
+                  </g>
+                );
+              })()}
             </g>
           );
         })}

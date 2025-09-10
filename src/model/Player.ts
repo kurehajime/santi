@@ -1,5 +1,6 @@
 import type { CardId } from './types';
 import type { Mana } from './Mana';
+import { MAX_NON_SPECIAL_COPIES } from '../config/constants';
 import { createMana } from './Mana';
 
 export interface Player {
@@ -17,5 +18,5 @@ export const createPlayer = (partial?: Partial<Player>): Player => ({
   mana: partial?.mana ?? createMana(),
   life: partial?.life ?? 12,
   stars: partial?.stars ?? 4,
-  maxHands: partial?.maxHands ?? 5,
+  maxHands: partial?.maxHands ?? MAX_NON_SPECIAL_COPIES,
 });
