@@ -9,11 +9,11 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
   // Horizontal row metrics
   const fsMana = Math.max(14, Math.round(height * 0.6)); // bigger font for mana
   const fsHp = Math.max(14, Math.round(height * 0.6));
-  // Reserve right-side area for stars, and keep HP/mana within left content area
-  const starCell = Math.max(8, Math.round(height * 0.22));
+  // Reserve right-side area for stars (up to 12 = 2 rows x 6 cols)
+  const starCell = Math.max(8, Math.round(height * 0.18));
   const starGapX = Math.max(2, Math.round(starCell * 0.2));
   const starGapY = Math.max(2, Math.round(starCell * 0.2));
-  const starBlockW = starCell * 4 + starGapX * 3; // 4 columns
+  const starBlockW = starCell * 6 + starGapX * 5; // 6 columns
   const rightPadding = pad; // spacing between content and star block
   const contentW = Math.max(40, width - pad * 2 - rightPadding - starBlockW);
   const contentStartX = pad;
@@ -43,20 +43,20 @@ export const StatusElement: React.FC<Props> = ({ player, width, height, isActive
   return (
     <g>
       <rect x={0} y={0} width={width} height={height} rx={r} fill={bgFill} stroke={bgStroke} />
-      {/* Stars (two rows, up to 8) */}
+      {/* Stars (up to 12, 2 rows x 6 cols) */}
       {(() => {
-        const maxStars = 8;
+        const maxStars = 12;
         const owned = Math.max(0, Math.min(maxStars, player.stars ?? 0));
         const cell = starCell;
         const gapX = starGapX;
         const gapY = starGapY;
         const totalW = starBlockW;
         const startX = width - pad - totalW; // pinned to right
-        const startY = pad * 0.6;
+        const startY = pad * 0.4;
         const items: React.ReactElement[] = [];
         for (let i = 0; i < maxStars; i++) {
-          const row = Math.floor(i / 4);
-          const col = i % 4;
+          const row = Math.floor(i / 6);
+          const col = i % 6;
           const x = startX + col * (cell + gapX);
           const y = startY + row * (cell + gapY);
           const filled = i < owned;

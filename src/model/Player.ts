@@ -17,6 +17,7 @@ export const createPlayer = (partial?: Partial<Player>): Player => ({
   hands: partial?.hands ?? [],
   mana: partial?.mana ?? createMana(),
   life: partial?.life ?? 12,
-  stars: partial?.stars ?? 4,
+  // 初期★は6（最大12）
+  stars: partial?.stars ?? 6,
   maxHands: partial?.maxHands ?? MAX_NON_SPECIAL_COPIES,
 });

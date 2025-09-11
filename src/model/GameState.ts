@@ -143,18 +143,19 @@ export class GameState {
         // rank = n - pos (pos=0 -> rank n, last -> rank 1)
         rankByIdx[idx] = n - pos;
       }
-      // Apply star deltas
-      const deltaForRank = (rank: number) => (rank === 1 ? 2 : rank === 2 ? 1 : rank === 3 ? -1 : -2);
+      // Apply star deltas per spec: 1st +3, 2nd +1, 3rd -1, 4th -3
+      const deltaForRank = (rank: number) => (rank === 1 ? 3 : rank === 2 ? 1 : rank === 3 ? -1 : -3);
       let updated = this.clone();
       const starDelta: number[] = Array(n).fill(0);
       for (let i = 0; i < n; i++) {
         const d = deltaForRank(rankByIdx[i]);
         starDelta[i] = d;
-        const cur = updated.players[i].stars ?? 4;
-        updated.players[i].stars = Math.max(0, Math.min(8, cur + d));
+        const cur = updated.players[i].stars ?? 6;
+        // cap between 0 and 12
+        updated.players[i].stars = Math.max(0, Math.min(12, cur + d));
       }
-      // Check match end conditions: any 0 or 8 stars
-      const endsMatch = updated.players.some((p) => p.stars <= 0 || p.stars >= 8);
+      // Check match end conditions: any 0 or 12 stars
+      const endsMatch = updated.players.some((p) => p.stars <= 0 || p.stars >= 12);
       if (endsMatch) {
         // Final standings by stars (desc). Tie-break by better round rank, then seat index.
         const tuples = updated.players.map((p, i) => ({ idx: i, stars: p.stars ?? 0, roundRank: rankByIdx[i] ?? 4 }));
