@@ -157,11 +157,26 @@ export class GameState {
       // Check match end conditions: any 0 or 12 stars
       const endsMatch = updated.players.some((p) => p.stars <= 0 || p.stars >= 12);
       if (endsMatch) {
-        // Final standings by stars (desc). Tie-break by better round rank, then seat index.
+        // Final standings by stars (desc). Players with the same stars share the same rank.
+        // Within the same star count, order for display uses round rank then seat index, but rank number is equal.
         const tuples = updated.players.map((p, i) => ({ idx: i, stars: p.stars ?? 0, roundRank: rankByIdx[i] ?? 4 }));
         tuples.sort((a, b) => (b.stars - a.stars) || (a.roundRank - b.roundRank) || (a.idx - b.idx));
         const finalRanks: number[] = Array(n).fill(n);
-        tuples.forEach((t, pos) => { finalRanks[t.idx] = pos + 1; });
+        let currentRank = 1;
+        let groupSize = 0;
+        let lastStars: number | null = null;
+        for (let pos = 0; pos < tuples.length; pos++) {
+          const t = tuples[pos];
+          if (lastStars === null || t.stars !== lastStars) {
+            // new group starts; advance rank by previous group size
+            if (lastStars !== null) currentRank += groupSize;
+            groupSize = 1;
+            lastStars = t.stars;
+          } else {
+            groupSize += 1;
+          }
+          finalRanks[t.idx] = currentRank;
+        }
         return new GameState({ ...updated, mode: 'gameover', lastStarDelta: starDelta, lastRanks: finalRanks } as GameState);
       }
       // Otherwise, round over and wait for next round

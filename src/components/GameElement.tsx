@@ -5,6 +5,7 @@ import { CardHoverContext } from './CardHoverContext';
 import { CardElement } from './CardElement';
 import { InitialGameState } from '../model/InitialGameState';
 import { pickBestPlayable } from '../ai/score';
+import { toast } from 'react-toastify';
 
 // フェーズ1: SVGでHello, worldを描画する最小実装
 export const GameElement: React.FC = () => {
@@ -18,6 +19,8 @@ export const GameElement: React.FC = () => {
     if (gameState.mode !== 'playing') return;
     // If no playable cards for current player (human or CPU), they immediately lose
     if (gameState.playableHands().length === 0) {
+      const seat = gameState.turn === 0 ? '南' : gameState.turn === 1 ? '西' : gameState.turn === 2 ? '北' : '東';
+      toast.info(`${seat} は出せるカードがなく敗北`, { autoClose: 2000 });
       setGameState((s) => s.loseIfNoPlayable());
       return;
     }
