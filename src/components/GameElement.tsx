@@ -1,6 +1,9 @@
 import React from 'react';
 import { GameState } from '../model/GameState';
 import { FieldElement } from './FieldElement';
+import { StartOverlay } from './overlays/StartOverlay';
+import { GameOverOverlay } from './overlays/GameOverOverlay';
+import { RoundOverOverlay } from './overlays/RoundOverOverlay';
 import { CardHoverContext } from './CardHoverContext';
 import { CardElement } from './CardElement';
 import { InitialGameState } from '../model/InitialGameState';
@@ -70,74 +73,17 @@ export const GameElement: React.FC = () => {
             }}
           />
         </svg>
+
         {gameState.mode === 'introduction' && (
-          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
-            <button
-              onClick={() => setGameState((s) => s.start())}
-              style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
-            >
-              開始
-            </button>
-          </div>
+          <StartOverlay onStart={() => setGameState((s) => s.start())} />
         )}
         {gameState.mode === 'gameover' && (
-          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
-            {/* 最終順位一覧 */}
-            <div style={{ position: 'absolute', top: 300, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center' }}>
-              <div>
-                {(() => {
-                  const ranks = gameState.lastRanks ?? [];
-                  const idxs = ranks.map((_, i) => i).sort((a, b) => (ranks[a] - ranks[b]) || (a - b));
-                  return idxs.map((idx) => {
-                    const rk = ranks[idx];
-                    const seat = idx === 0 ? '南' : idx === 1 ? '西' : idx === 2 ? '北' : '東';
-                    const stars = gameState.players[idx]?.stars ?? 0;
-                    return (
-                      <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{rk}位: {seat} （★{stars}）</div>
-                    );
-                  });
-                })()}
-              </div>
-            </div>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-              <button
-                onClick={() => {
-                  setHover(null);
-                  setGameState(InitialGameState());
-                }}
-                style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
-              >
-                再戦
-              </button>
-            </div>
-          </div>
+          <GameOverOverlay gameState={gameState} onRestart={() => { setHover(null); setGameState(InitialGameState()); }} />
         )}
         {gameState.mode === 'roundover' && (
-          <div style={{ position: 'absolute', inset: 0 }}>
-            {/* 今回の星の増減（東西南北） */}
-            <div style={{ position: 'absolute', top: 300, left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', textAlign: 'center' }}>
-              {(gameState.lastStarDelta ?? []).map((d, idx) => {
-                const seat = idx === 0 ? '南' : idx === 1 ? '西' : idx === 2 ? '北' : '東';
-                const sign = d > 0 ? '+' : '';
-                return (
-                  <div key={idx} style={{ color: '#111827', fontSize: 16 }}>{seat}: {sign}{d}</div>
-                );
-              })}
-            </div>
-            {/* 次局ボタンを中央に固定 */}
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-              <button
-                onClick={() => {
-                  setHover(null);
-                  setGameState((s) => s.nextRound());
-                }}
-                style={{ padding: '10px 20px', borderRadius: 8, fontSize: 16 }}
-              >
-                次局
-              </button>
-            </div>
-          </div>
+          <RoundOverOverlay gameState={gameState} onNext={() => { setHover(null); setGameState((s) => s.nextRound()); }} />
         )}
+
         {hover && hover.id && (
           <div
             style={{
