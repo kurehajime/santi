@@ -4,18 +4,18 @@ import { FieldElement } from './FieldElement';
 import { StartOverlay } from './overlays/StartOverlay';
 import { GameOverOverlay } from './overlays/GameOverOverlay';
 import { RoundOverOverlay } from './overlays/RoundOverOverlay';
-import { CardHoverContext } from './CardHoverContext';
-import { CardElement } from './CardElement';
+import { CardHoverContext, type HoverCard } from './CardHoverContext';
 import { InitialGameState } from '../model/InitialGameState';
 import { pickBestPlayable } from '../ai/score';
 import { toast } from 'react-toastify';
+import { HoverPreviewLayer } from './HoverPreviewLayer';
 
 // フェーズ1: SVGでHello, worldを描画する最小実装
 export const GameElement: React.FC = () => {
   const [gameState, setGameState] = React.useState<GameState>(() => InitialGameState());
   const width = 600;
   const height = Math.round(width * Math.SQRT2);
-  const [hover, setHover] = React.useState<{ id: any | null; width: number } | null>(null);
+  const [hover, setHover] = React.useState<HoverCard | null>(null);
 
   // CPU auto-play: when mode is playing and it's not human's turn
   React.useEffect(() => {
@@ -84,28 +84,7 @@ export const GameElement: React.FC = () => {
           <RoundOverOverlay gameState={gameState} onNext={() => { setHover(null); setGameState((s) => s.nextRound()); }} />
         )}
 
-        {hover && hover.id && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'grid',
-              placeItems: 'center',
-              pointerEvents: 'none',
-              zIndex: 5,
-            }}
-            aria-hidden
-          >
-            <svg
-              width={hover.width}
-              height={Math.round(hover.width * Math.SQRT2)}
-              viewBox={`0 0 ${hover.width} ${Math.round(hover.width * Math.SQRT2)}`}
-              style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.4))' }}
-            >
-              <CardElement id={hover.id} width={hover.width} faceUp labelFallback="カード" />
-            </svg>
-          </div>
-        )}
+        <HoverPreviewLayer hover={hover} />
       </div>
     </CardHoverContext.Provider>
   );
